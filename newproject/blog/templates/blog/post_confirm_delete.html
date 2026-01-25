@@ -1,0 +1,28 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+    <title>Delete Post</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Delete Post</h1>
+      </header>
+
+      <div class="post">
+        <p>
+          Are you sure you want to delete "<strong>{{ post.title }}</strong>"?
+        </p>
+        <p class="error">This action cannot be undone!</p>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a href="{% url 'post_detail' post.id %}" class="btn">Cancel</a>
+      </form>
+    </div>
+  </body>
+</html>
