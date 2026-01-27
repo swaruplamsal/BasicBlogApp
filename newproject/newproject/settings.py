@@ -124,3 +124,27 @@ LOGOUT_REDIRECT_URL = '/'
 STATICFILES_DIRS=[
     BASE_DIR / 'static'
 ]
+
+# REST Framework Configuration
+REST_FRAMEWORK = {
+    # Pagination - splits results into pages
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,  # 10 items per page
+    
+    # Authentication - how users prove who they are
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # Use Django sessions
+        'rest_framework.authentication.BasicAuthentication',     # Username/password
+    ],
+    
+    # Permissions - who can do what
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',  # Anyone can read, only logged-in users can write
+    ],
+    
+    # Filtering - search and sort
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+}
