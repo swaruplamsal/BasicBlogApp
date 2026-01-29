@@ -1,4 +1,3 @@
-// app/page.js
 import Link from "next/link";
 import Navbar from "./components/Navbar";
 
@@ -22,12 +21,22 @@ export default async function HomePage() {
 
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar /> {/* ← Add this */}
+        <Navbar />
         <div className="py-8">
           <div className="max-w-4xl mx-auto px-4">
-            <header className="mb-8">
-              <h1 className="text-4xl font-bold text-gray-900">All Posts</h1>
-              <p className="text-gray-600 mt-2">Built with Django & Next.js</p>
+            <header className="mb-8 flex justify-between items-center">
+              <div>
+                <h1 className="text-4xl font-bold text-gray-900">All Posts</h1>
+                <p className="text-gray-600 mt-2">
+                  Built with Django & Next.js
+                </p>
+              </div>
+              <Link
+                href="/posts/create"
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              >
+                + Create Post
+              </Link>
             </header>
 
             <div className="space-y-6">

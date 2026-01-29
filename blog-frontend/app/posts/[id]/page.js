@@ -1,82 +1,62 @@
-// app/posts/[id]/page.js
+import Navbar from "../../components/Navbar";
+import CommentForm from "../../components/CommentForm";
+import CommentList from "../../components/CommentList";
+import EditButton from "../../components/EditButton";
 import Link from "next/link";
-import CommentForm from "@/app/components/CommentForm";
-import CommentList from "@/app/components/CommentList";
-import Navbar from "@/app/components/Navbar";
 
-export default async function PostDetailPage({ params }) {
+export default async function PostPage({ params }) {
   const { id } = await params;
 
   try {
-    const res = await fetch(`http://127.0.0.1:8000/api/v1/posts/${id}/`, {
-      cache: "no-store",
-    });
+    const [postRes, commentsRes] = await Promise.all([
+      fetch(`http://127.0.0.1:8000/api/v1/posts/${id}/`, {
+        cache: "no-store",
+      }),
+      fetch(`http://127.0.0.1:8000/api/v1/comments/?post=${id}`, {
+        cache: "no-store",
+      }),
+    ]);
 
-    if (!res.ok) {
-      return (
-        <div className="min-h-screen bg-gray-50">
-          <Navbar />
-          <div className="py-8">
-            <div className="max-w-4xl mx-auto px-4">
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-                <h2 className="text-xl font-bold text-yellow-800">
-                  Post Not Found
-                </h2>
-                <p className="text-yellow-700 mt-2">
-                  The post you&apos;re looking for doesn&apos;t exist or has
-                  been deleted.
-                </p>
-                <Link
-                  href="/"
-                  className="text-blue-600 hover:text-blue-800 mt-4 inline-block"
-                >
-                  ← Back to all posts
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
+    if (!postRes.ok) {
+      throw new Error("Post not found");
     }
 
-    const text = await res.text();
-    if (!text) {
-      throw new Error("Empty response from API");
-    }
-
-    const post = JSON.parse(text);
+    const post = await postRes.json();
+    const commentsData = commentsRes.ok
+      ? await commentsRes.json()
+      : { results: [] };
+    const comments = commentsData.results || commentsData;
 
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-
         <div className="py-8">
-          <div className="max-w-4xl mx-auto px-4">
-            <Link
-              href="/"
-              className="text-blue-600 hover:text-blue-800 mb-6 inline-block"
-            >
-              ← Back to all posts
-            </Link>
+          <article className="max-w-4xl mx-auto px-4">
+            <div className="bg-white p-8 rounded-lg shadow-md">
+              {/* Header with Edit Button */}
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex-1">
+                  <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                    {post.title}
+                  </h1>
+                  <div className="text-sm text-gray-500">
+                    By {post.author_username || "Unknown"} •{" "}
+                    {new Date(post.created_at).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                    {post.category_name && (
+                      <span>
+                        {" "}
+                        • in <strong>{post.category_name}</strong>
+                      </span>
+                    )}
+                  </div>
+                </div>
 
-            <article className="bg-white p-8 rounded-lg shadow-md mb-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                {post.title}
-              </h1>
-
-              <div className="text-sm text-gray-500 mb-6">
-                By {post.author?.username || "Unknown"} •{" "}
-                {new Date(post.created_at).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-                {post.category && (
-                  <span>
-                    {" "}
-                    • in <strong>{post.category.name}</strong>
-                  </span>
-                )}
+                {/* Edit Button */}
+                <EditButton postId={post.id} authorId={post.author} />
               </div>
 
               {post.tags && post.tags.length > 0 && (
@@ -92,45 +72,34 @@ export default async function PostDetailPage({ params }) {
                 </div>
               )}
 
-              <div className="prose max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
-                {post.content}
+              <div className="prose max-w-none text-gray-700 mb-8">
+                {post.content.split("\n").map((paragraph, idx) => (
+                  <p key={idx} className="mb-4">
+                    {paragraph}
+                  </p>
+                ))}
               </div>
-            </article>
+            </div>
 
             {/* Comments Section */}
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                Comments ({post.comment_count || 0})
-              </h3>
-
-              {/* Comment Form */}
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Comments ({comments.length})
+              </h2>
               <CommentForm postId={post.id} />
-
-              {/* Comments List */}
-              <CommentList comments={post.comments} />
+              <CommentList comments={comments} />
             </div>
-          </div>
+          </article>
         </div>
       </div>
     );
   } catch (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="py-8">
-          <div className="max-w-4xl mx-auto px-4">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-              <h2 className="text-xl font-bold text-red-800 mb-2">
-                Error Loading Post
-              </h2>
-              <p className="text-red-600">{error.message}</p>
-              <Link
-                href="/"
-                className="text-blue-600 hover:text-blue-800 mt-4 inline-block"
-              >
-                ← Back to all posts
-              </Link>
-            </div>
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <h2 className="text-xl font-bold text-red-800 mb-2">Error</h2>
+            <p className="text-red-600">{error.message}</p>
           </div>
         </div>
       </div>
