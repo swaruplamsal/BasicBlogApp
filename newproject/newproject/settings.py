@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'blog',
     'rest_framework',
     'corsheaders',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
@@ -136,7 +137,7 @@ REST_FRAMEWORK = {
     # Authentication - how users prove who they are
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',  # Use Django sessions
-        'rest_framework.authentication.BasicAuthentication',     # Username/password
+        'rest_framework.authentication.TokenAuthentication',     # Username/password
     ],
     
     # Permissions - who can do what
