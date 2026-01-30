@@ -12,17 +12,22 @@ export default function NavbarAuth() {
       {user ? (
         <>
           <Link
-            href="/create-post"
-            className="text-slate-300 hover:text-amber-500 font-medium transition-colors text-sm tracking-wide"
+            href="/posts/create"
+            className="link-nav font-medium text-sm tracking-wide"
           >
             Write
           </Link>
-          <span className="text-slate-400 font-medium text-sm">
+          <span className="font-medium text-sm" style={{ color: "#94a3b8" }}>
             {user.username}
           </span>
           <button
             onClick={logout}
-            className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-md font-medium transition-all border border-slate-700 hover:border-slate-600 text-sm"
+            className="px-5 py-2 rounded-md font-medium transition-all text-sm"
+            style={{
+              backgroundColor: "rgba(90, 69, 69, 0.8)",
+              color: "#cbd5e1",
+              border: "1px solid #6a5555",
+            }}
           >
             Logout
           </button>
@@ -31,13 +36,18 @@ export default function NavbarAuth() {
         <>
           <Link
             href="/login"
-            className="px-5 py-2 bg-slate-800/50 hover:bg-slate-800 text-slate-300 rounded-md font-medium transition-all border border-slate-700/50 hover:border-slate-600 text-sm"
+            className="px-5 py-2 rounded-md font-medium transition-all text-sm"
+            style={{
+              backgroundColor: "rgba(90, 69, 69, 0.5)",
+              color: "#cbd5e1",
+              border: "1px solid rgba(106, 85, 85, 0.5)",
+            }}
           >
             Login
           </Link>
           <Link
             href="/signup"
-            className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-md font-semibold transition-all shadow-lg shadow-amber-500/20 text-sm"
+            className="btn-primary px-5 py-2 text-white rounded-md font-semibold shadow-lg text-sm"
           >
             Sign Up
           </Link>

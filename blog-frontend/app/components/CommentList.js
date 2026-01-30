@@ -2,7 +2,7 @@
 export default function CommentList({ comments }) {
   if (!comments || comments.length === 0) {
     return (
-      <p className="text-slate-500 text-center py-12">
+      <p className="text-center py-12" style={{ color: "#94a3b8" }}>
         No comments yet. Be the first to comment!
       </p>
     );
@@ -13,17 +13,29 @@ export default function CommentList({ comments }) {
       {comments.map((comment) => (
         <div
           key={comment.id}
-          className="bg-slate-800/30 border border-slate-700/50 p-6 rounded-lg hover:border-slate-600/50 transition-colors"
+          className="p-6 rounded-lg transition-colors"
+          style={{
+            backgroundColor: "rgba(90, 69, 69, 0.3)",
+            border: "1px solid rgba(106, 85, 85, 0.5)",
+          }}
         >
           <div className="flex items-center gap-3 mb-3">
-            <span className="w-8 h-8 rounded-full bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-xs font-bold">
+            <span
+              className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+              style={{
+                background: "linear-gradient(135deg, #000080, #9E2A2A)",
+              }}
+            >
               {(comment.author_username || "U").charAt(0).toUpperCase()}
             </span>
             <div className="flex flex-col">
-              <strong className="text-slate-200 font-semibold text-sm">
+              <strong
+                className="font-semibold text-sm"
+                style={{ color: "#cbd5e1" }}
+              >
                 {comment.author_username}
               </strong>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs" style={{ color: "#94a3b8" }}>
                 {new Date(comment.created_at).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
@@ -34,7 +46,10 @@ export default function CommentList({ comments }) {
               </span>
             </div>
           </div>
-          <p className="text-slate-300 whitespace-pre-line leading-relaxed">
+          <p
+            className="whitespace-pre-line leading-relaxed"
+            style={{ color: "#cbd5e1" }}
+          >
             {comment.content}
           </p>
         </div>

@@ -12,7 +12,14 @@ tools:
 - search_images
 - search_products
 - graphic_art
-- fetch_web_content
+- [redacted]
+
+palette-sources:
+
+- https://colorhunt.co/
+- https://coolors.co/
+- https://www.design-seeds.com/
+- https://www.colourlovers.com/palettes
 
 workflow:
 mandatory-steps: - Website Type:
@@ -29,6 +36,7 @@ output-rules:
 - Ensure accessibility (contrast, spacing, readability)
 - Do not use generic AI-generated color palettes
 - Always search the internet for curated, high-quality color palettes before suggesting
+- Always reference palette-sources when selecting colors
 
 design-quality:
 

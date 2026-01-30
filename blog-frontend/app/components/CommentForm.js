@@ -2,104 +2,78 @@
 
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
+import { commentsApi } from "../../lib/api";
 
 export default function CommentForm({ postId }) {
   const { user } = useAuth();
-  const [content, setContent] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const [comment, setComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess(false);
-    setLoading(true);
+
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
+    if (!comment.trim()) return;
+
+    setIsSubmitting(true);
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("Please log in to comment");
-      }
-
-      const response = await fetch("http://127.0.0.1:8000/api/v1/comments/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
-        },
-        body: JSON.stringify({
-          post: postId,
-          content: content,
-        }),
+      await commentsApi.create({
+        post: postId,
+        content: comment,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to post comment");
-      }
-
-      setSuccess(true);
-      setContent("");
-
-      // Refresh the page to show new comment
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    } catch (err) {
-      setError(err.message);
+      setComment("");
+      router.refresh();
+    } catch (error) {
+      alert("Failed to post comment: " + error.message);
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   if (!user) {
     return (
-      <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-5 mb-8">
-        <p className="text-amber-400">Please log in to leave a comment.</p>
+      <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 text-center">
+        <p className="text-slate-400 mb-4">Sign in to leave a comment</p>
+        <button
+          onClick={() => router.push("/login")}
+          className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+        >
+          Sign In
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="mb-10">
-      <h4 className="text-xl font-semibold text-slate-200 mb-4">
-        Add a Comment
-      </h4>
-
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg mb-4">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-lg mb-4">
-          Comment posted successfully!
-        </div>
-      )}
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-slate-800/30 border border-slate-700/50 p-6 rounded-lg"
-      >
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-semibold text-slate-300 mb-3">
+          Leave a Comment
+        </label>
         <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          required
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Share your thoughts..."
           rows="4"
-          placeholder="Write your comment..."
-          className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-500 focus:ring-2 focus:ring-amber-500 focus:border-transparent mb-4 transition-all"
+          required
+          className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
         />
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-amber-500 text-slate-950 px-6 py-2.5 rounded-md font-semibold hover:bg-amber-400 disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed transition-all"
-        >
-          {loading ? "Posting..." : "Post Comment"}
-        </button>
-      </form>
-    </div>
+      </div>
+      <button
+        type="submit"
+        disabled={isSubmitting || !comment.trim()}
+        className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+      >
+        {isSubmitting ? "Posting..." : "Post Comment"}
+      </button>
+    </form>
   );
 }

@@ -1,23 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { use } from "react";
 import Navbar from "../../../components/Navbar";
 import { useAuth } from "../../../context/AuthContext";
+import { postsApi, categoriesApi, tagsApi } from "../../../../lib/api";
 
-export default function EditPostPage() {
+export default function EditPostPage({ params }) {
+  const resolvedParams = use(params);
+
   const router = useRouter();
-  const params = useParams();
   const { user } = useAuth();
-  const postId = params.id;
-
+  const [post, setPost] = useState(null);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [fetchingPost, setFetchingPost] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [newTagName, setNewTagName] = useState("");
-  const [addingTag, setAddingTag] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -26,67 +26,43 @@ export default function EditPostPage() {
     tags: [],
   });
 
-  // Fetch post data, categories and tags on mount
+  // Fetch post, categories, and tags
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token");
-
-        const [postRes, categoriesRes, tagsRes] = await Promise.all([
-          fetch(`http://127.0.0.1:8000/api/v1/posts/${postId}/`, {
-            headers: token ? { Authorization: `Token ${token}` } : {},
-          }),
-          fetch("http://127.0.0.1:8000/api/v1/categories/"),
-          fetch("http://127.0.0.1:8000/api/v1/tags/"),
+        const [postData, categoriesData, tagsData] = await Promise.all([
+          postsApi.getById(resolvedParams.id),
+          categoriesApi.getAll(),
+          tagsApi.getAll(),
         ]);
 
-        if (!postRes.ok) {
-          throw new Error("Post not found");
-        }
+        setPost(postData);
+        setCategories(categoriesData.results || categoriesData);
+        setTags(tagsData.results || tagsData);
 
-        const post = await postRes.json();
-
-        // Check if user is the author
-        if (user && post.author !== user.id) {
-          router.push(`/posts/${postId}`);
-          return;
-        }
-
-        // Set form data with existing post data
+        // Set form data
         setFormData({
-          title: post.title || "",
-          content: post.content || "",
-          category: post.category || "",
-          tags: post.tags?.map((tag) => tag.id) || [],
+          title: postData.title,
+          content: postData.content,
+          category: postData.category?.id || "",
+          tags: postData.tags?.map((tag) => tag.id) || [],
         });
-
-        if (categoriesRes.ok) {
-          const categoriesData = await categoriesRes.json();
-          setCategories(categoriesData.results || categoriesData);
-        }
-
-        if (tagsRes.ok) {
-          const tagsData = await tagsRes.json();
-          setTags(tagsData.results || tagsData);
-        }
       } catch (err) {
-        setError(err.message);
+        setError("Failed to load post: " + err.message);
       } finally {
-        setFetchingPost(false);
+        setLoading(false);
       }
     };
 
-    if (user) {
-      fetchData();
-    }
-  }, [postId, user, router]);
+    fetchData();
+  }, [resolvedParams.id]);
 
-  // Redirect if not authenticated
+  // Check authorization
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
+    if (!loading && post && user && post.author !== user.id) {
+      router.push(`/posts/${resolvedParams.id}`);
     }
-  }, [user, router]);
+  }, [loading, post, user, resolvedParams.id, router]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -105,116 +81,56 @@ export default function EditPostPage() {
     }));
   };
 
-  const handleAddTag = async (e) => {
-    e.preventDefault();
-    if (!newTagName.trim()) return;
-
-    setAddingTag(true);
-    try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("http://127.0.0.1:8000/api/v1/tags/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
-        },
-        body: JSON.stringify({ name: newTagName.trim() }),
-      });
-
-      if (response.ok) {
-        const newTag = await response.json();
-        setTags((prev) => [...prev, newTag]);
-        setFormData((prev) => ({
-          ...prev,
-          tags: [...prev.tags, newTag.id],
-        }));
-        setNewTagName("");
-      } else {
-        const errorData = await response.json();
-        alert(errorData.name?.[0] || "Failed to create tag");
-      }
-    } catch (err) {
-      console.error("Error creating tag:", err);
-      alert("Failed to create tag");
-    } finally {
-      setAddingTag(false);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
     setError("");
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/v1/posts/${postId}/`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${token}`,
-          },
-          body: JSON.stringify(formData),
-        },
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to update post");
-      }
-
-      router.push(`/posts/${postId}`);
+      await postsApi.update(resolvedParams.id, formData);
+      router.push(`/posts/${resolvedParams.id}`);
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
   const handleDelete = async () => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this post? This action cannot be undone.",
-      )
-    ) {
+    if (!confirm("Are you sure you want to delete this post?")) {
       return;
     }
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/v1/posts/${postId}/`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        },
-      );
-
-      if (response.ok) {
-        router.push("/");
-      } else {
-        throw new Error("Failed to delete post");
-      }
+      await postsApi.delete(resolvedParams.id);
+      router.push("/");
     } catch (err) {
-      alert(err.message);
+      alert("Failed to delete post: " + err.message);
     }
   };
 
-  if (!user || fetchingPost) {
+  if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-950">
         <Navbar />
-        <div className="py-8">
-          <div className="max-w-3xl mx-auto px-4 text-center">
-            <p className="text-gray-600">Loading...</p>
+        <div className="max-w-4xl mx-auto px-6 py-20 text-center">
+          <div className="inline-block p-8 bg-slate-900 rounded-2xl border border-slate-800">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+            <p className="text-slate-400">Loading post...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error && !post) {
+    return (
+      <div className="min-h-screen bg-slate-950">
+        <Navbar />
+        <div className="max-w-4xl mx-auto px-6 py-20">
+          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-8">
+            <h2 className="text-2xl font-bold text-red-400 mb-3">Error</h2>
+            <p className="text-red-300">{error}</p>
           </div>
         </div>
       </div>
@@ -222,162 +138,126 @@ export default function EditPostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-950">
       <Navbar />
-      <div className="py-8">
-        <div className="max-w-3xl mx-auto px-4">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">Edit Post</h1>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-              {error}
-            </div>
-          )}
-
-          <form
-            onSubmit={handleSubmit}
-            className="bg-white p-8 rounded-lg shadow-md"
-          >
-            {/* Title */}
-            <div className="mb-6">
-              <label
-                htmlFor="title"
-                className="block text-gray-700 font-semibold mb-2"
-              >
-                Title *
-              </label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter post title"
-              />
-            </div>
-
-            {/* Content */}
-            <div className="mb-6">
-              <label
-                htmlFor="content"
-                className="block text-gray-700 font-semibold mb-2"
-              >
-                Content *
-              </label>
-              <textarea
-                id="content"
-                name="content"
-                value={formData.content}
-                onChange={handleChange}
-                required
-                rows="12"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Write your post content here..."
-              />
-            </div>
-
-            {/* Category */}
-            <div className="mb-6">
-              <label
-                htmlFor="category"
-                className="block text-gray-700 font-semibold mb-2"
-              >
-                Category
-              </label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Select a category</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Tags */}
-            <div className="mb-6">
-              <label className="block text-gray-700 font-semibold mb-2">
-                Tags
-              </label>
-
-              {/* Add New Tag Input */}
-              <div className="mb-4 flex gap-2">
-                <input
-                  type="text"
-                  value={newTagName}
-                  onChange={(e) => setNewTagName(e.target.value)}
-                  placeholder="Add new tag..."
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddTag(e);
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={handleAddTag}
-                  disabled={addingTag || !newTagName.trim()}
-                  className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                >
-                  {addingTag ? "Adding..." : "+ Add"}
-                </button>
-              </div>
-
-              {/* Existing Tags */}
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    onClick={() => handleTagToggle(tag.id)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      formData.tags.includes(tag.id)
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
-                  >
-                    {tag.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Submit Buttons */}
-            <div className="flex gap-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-              >
-                {loading ? "Updating..." : "Update Post"}
-              </button>
-              <button
-                type="button"
-                onClick={() => router.push(`/posts/${postId}`)}
-                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleDelete}
-                className="px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors"
-              >
-                Delete
-              </button>
-            </div>
-          </form>
+      <div className="max-w-4xl mx-auto px-6 py-16">
+        {/* Header */}
+        <div className="mb-12">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-red-400 to-amber-400 bg-clip-text text-transparent mb-4">
+            Edit Post
+          </h1>
+          <p className="text-xl text-slate-400">Make your changes below</p>
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="mb-8 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <p className="text-red-400">{error}</p>
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Title
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-600"
+            />
+          </div>
+
+          {/* Content */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Content
+            </label>
+            <textarea
+              name="content"
+              value={formData.content}
+              onChange={handleChange}
+              required
+              rows="12"
+              className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
+            />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Category
+            </label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-600"
+            >
+              <option value="">Select a category</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Tags */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Tags
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <button
+                  key={tag.id}
+                  type="button"
+                  onClick={() => handleTagToggle(tag.id)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    formData.tags.includes(tag.id)
+                      ? "bg-red-600 text-white"
+                      : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                  }`}
+                >
+                  #{tag.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-4 pt-6">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="flex-1 px-8 py-4 bg-red-600 hover:bg-red-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-all"
+            >
+              {submitting ? "Saving..." : "Save Changes"}
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push(`/posts/${resolvedParams.id}`)}
+              className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="px-8 py-4 bg-red-900/30 hover:bg-red-900/50 text-red-400 font-semibold rounded-lg border border-red-900/50 transition-colors"
+            >
+              Delete
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

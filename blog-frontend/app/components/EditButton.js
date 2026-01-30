@@ -13,7 +13,12 @@ export default function EditButton({ postId, authorId }) {
   return (
     <Link
       href={`/posts/${postId}/edit`}
-      className="ml-4 px-5 py-2.5 bg-slate-800 text-slate-300 rounded-md font-medium hover:bg-slate-700 hover:text-slate-200 transition-all border border-slate-700 hover:border-slate-600 whitespace-nowrap text-sm"
+      className="ml-4 px-5 py-2.5 rounded-md font-medium transition-all whitespace-nowrap text-sm"
+      style={{
+        backgroundColor: "rgba(90, 69, 69, 0.8)",
+        color: "#cbd5e1",
+        border: "1px solid #6a5555",
+      }}
     >
       Edit Post
     </Link>

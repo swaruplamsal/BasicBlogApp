@@ -8,7 +8,13 @@ const NavbarAuth = dynamic(() => import("./NavbarAuth"), { ssr: false });
 
 export default function Navbar() {
   return (
-    <nav className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/50 shadow-lg">
+    <nav
+      className="sticky top-0 z-50 backdrop-blur-xl border-b shadow-lg"
+      style={{
+        backgroundColor: "rgba(58, 37, 37, 0.8)",
+        borderColor: "rgba(90, 69, 69, 0.5)",
+      }}
+    >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
@@ -16,7 +22,13 @@ export default function Navbar() {
             href="/"
             className="group flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
-            <div className="w-10 h-10 rounded-lg bg-linear-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
+            <div
+              className="w-10 h-10 rounded-lg flex items-center justify-center shadow-lg"
+              style={{
+                background: "linear-gradient(135deg, #000080, #FF0000)",
+                boxShadow: "0 10px 25px -5px rgba(255, 0, 0, 0.3)",
+              }}
+            >
               <svg
                 className="w-6 h-6 text-white"
                 fill="none"
@@ -32,8 +44,11 @@ export default function Navbar() {
               </svg>
             </div>
             <span
-              className="text-2xl font-bold text-slate-50"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-2xl font-bold"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                color: "#f1f5f9",
+              }}
             >
               Editorial
             </span>
@@ -43,7 +58,7 @@ export default function Navbar() {
           <div className="flex items-center gap-8">
             <Link
               href="/"
-              className="text-slate-300 hover:text-amber-500 font-medium transition-colors text-sm tracking-wide"
+              className="link-nav font-medium text-sm tracking-wide"
             >
               Home
             </Link>

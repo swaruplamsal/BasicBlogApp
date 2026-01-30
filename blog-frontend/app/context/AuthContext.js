@@ -1,7 +1,7 @@
-// app/context/AuthContext.js
 "use client";
 
 import { createContext, useContext, useState } from "react";
+import { authApi } from "../../lib/api";
 
 const AuthContext = createContext();
 
@@ -25,46 +25,30 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => getInitialAuth().token);
 
   const login = async (username, password) => {
-    const res = await fetch("http://127.0.0.1:8000/api/v1/auth/login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const data = await authApi.login(username, password);
 
-    const data = await res.json();
-
-    if (res.ok) {
       setToken(data.token);
       setUser(data.user);
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       return { success: true };
-    } else {
-      return { success: false, error: data.error || "Login failed" };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
   };
 
   const signup = async (username, email, password) => {
-    const res = await fetch("http://127.0.0.1:8000/api/v1/auth/signup/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, email, password }),
-    });
+    try {
+      const data = await authApi.signup(username, email, password);
 
-    const data = await res.json();
-
-    if (res.ok) {
       setToken(data.token);
       setUser(data.user);
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
       return { success: true };
-    } else {
-      return { success: false, error: data.error || "Signup failed" };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
   };
 

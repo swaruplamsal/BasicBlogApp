@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../../components/Navbar";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import { useAuth } from "../../context/AuthContext";
+import { postsApi, categoriesApi, tagsApi } from "../../../lib/api";
 
 export default function CreatePostPage() {
   const router = useRouter();
@@ -11,6 +13,7 @@ export default function CreatePostPage() {
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
   const [newTagName, setNewTagName] = useState("");
   const [addingTag, setAddingTag] = useState(false);
@@ -26,22 +29,18 @@ export default function CreatePostPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [categoriesRes, tagsRes] = await Promise.all([
-          fetch("http://127.0.0.1:8000/api/v1/categories/"),
-          fetch("http://127.0.0.1:8000/api/v1/tags/"),
+        const [categoriesData, tagsData] = await Promise.all([
+          categoriesApi.getAll(),
+          tagsApi.getAll(),
         ]);
 
-        if (categoriesRes.ok) {
-          const categoriesData = await categoriesRes.json();
-          setCategories(categoriesData.results || categoriesData);
-        }
-
-        if (tagsRes.ok) {
-          const tagsData = await tagsRes.json();
-          setTags(tagsData.results || tagsData);
-        }
+        setCategories(categoriesData.results || categoriesData);
+        setTags(tagsData.results || tagsData);
       } catch (err) {
         console.error("Error fetching categories/tags:", err);
+        setError("Failed to load categories and tags");
+      } finally {
+        setInitialLoading(false);
       }
     };
 
@@ -78,31 +77,15 @@ export default function CreatePostPage() {
 
     setAddingTag(true);
     try {
-      const token = localStorage.getItem("token");
-      const response = await fetch("http://127.0.0.1:8000/api/v1/tags/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
-        },
-        body: JSON.stringify({ name: newTagName.trim() }),
-      });
-
-      if (response.ok) {
-        const newTag = await response.json();
-        setTags((prev) => [...prev, newTag]);
-        setFormData((prev) => ({
-          ...prev,
-          tags: [...prev.tags, newTag.id],
-        }));
-        setNewTagName("");
-      } else {
-        const errorData = await response.json();
-        alert(errorData.name?.[0] || "Failed to create tag");
-      }
+      const newTag = await tagsApi.create(newTagName.trim());
+      setTags((prev) => [...prev, newTag]);
+      setFormData((prev) => ({
+        ...prev,
+        tags: [...prev.tags, newTag.id],
+      }));
+      setNewTagName("");
     } catch (err) {
-      console.error("Error creating tag:", err);
-      alert("Failed to create tag");
+      alert("Failed to create tag: " + err.message);
     } finally {
       setAddingTag(false);
     }
@@ -114,26 +97,7 @@ export default function CreatePostPage() {
     setError("");
 
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        throw new Error("No authentication token found");
-      }
-
-      const response = await fetch("http://127.0.0.1:8000/api/v1/posts/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to create post");
-      }
-
-      const post = await response.json();
+      const post = await postsApi.create(formData);
       router.push(`/posts/${post.id}`);
     } catch (err) {
       setError(err.message);
@@ -143,161 +107,167 @@ export default function CreatePostPage() {
   };
 
   if (!user) {
-    return null; // or a loading spinner
+    return null;
+  }
+
+  if (initialLoading) {
+    return (
+      <div className="min-h-screen bg-slate-950 animate-fade-in">
+        <Navbar />
+        <div className="max-w-4xl mx-auto px-6 py-16">
+          <div className="mb-12 space-y-4">
+            <div className="h-12 w-96 bg-gradient-to-r from-slate-800/50 via-slate-700/50 to-slate-800/50 rounded-lg relative overflow-hidden">
+              <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+            </div>
+            <div className="h-6 w-64 bg-gradient-to-r from-slate-800/30 via-slate-700/30 to-slate-800/30 rounded relative overflow-hidden">
+              <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+            </div>
+          </div>
+          <LoadingSpinner message="Loading form..." />
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-950">
       <Navbar />
-      <div className="py-8">
-        <div className="max-w-3xl mx-auto px-4">
-          <h1 className="text-4xl font-bold text-gray-900 mb-8">
+
+      <div className="max-w-4xl mx-auto px-6 py-16">
+        {/* Header */}
+        <div className="mb-12">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-red-400 to-amber-400 bg-clip-text text-transparent mb-4">
             Create New Post
           </h1>
+          <p className="text-xl text-slate-400">
+            Share your thoughts with the world
+          </p>
+        </div>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-              {error}
-            </div>
-          )}
+        {/* Error Display */}
+        {error && (
+          <div className="mb-8 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+            <p className="text-red-400">{error}</p>
+          </div>
+        )}
 
-          <form
-            onSubmit={handleSubmit}
-            className="bg-white p-8 rounded-lg shadow-md"
-          >
-            {/* Title */}
-            <div className="mb-6">
-              <label
-                htmlFor="title"
-                className="block text-gray-700 font-semibold mb-2"
-              >
-                Title *
-              </label>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Title
+            </label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+              placeholder="Enter an engaging title..."
+            />
+          </div>
+
+          {/* Content */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Content
+            </label>
+            <textarea
+              name="content"
+              value={formData.content}
+              onChange={handleChange}
+              required
+              rows="12"
+              className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent resize-none"
+              placeholder="Tell your story..."
+            />
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Category
+            </label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
+            >
+              <option value="">Select a category</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Tags */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Tags
+            </label>
+
+            {/* Add New Tag */}
+            <div className="flex gap-2 mb-4">
               <input
                 type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter post title"
+                value={newTagName}
+                onChange={(e) => setNewTagName(e.target.value)}
+                placeholder="Create new tag..."
+                className="flex-1 px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-600"
               />
-            </div>
-
-            {/* Content */}
-            <div className="mb-6">
-              <label
-                htmlFor="content"
-                className="block text-gray-700 font-semibold mb-2"
-              >
-                Content *
-              </label>
-              <textarea
-                id="content"
-                name="content"
-                value={formData.content}
-                onChange={handleChange}
-                required
-                rows="12"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Write your post content here..."
-              />
-            </div>
-
-            {/* Category */}
-            <div className="mb-6">
-              <label
-                htmlFor="category"
-                className="block text-gray-700 font-semibold mb-2"
-              >
-                Category
-              </label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Select a category</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Tags */}
-            <div className="mb-6">
-              <label className="block text-gray-700 font-semibold mb-2">
-                Tags
-              </label>
-
-              {/* Add New Tag Input */}
-              <div className="mb-4 flex gap-2">
-                <input
-                  type="text"
-                  value={newTagName}
-                  onChange={(e) => setNewTagName(e.target.value)}
-                  placeholder="Add new tag..."
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddTag(e);
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={handleAddTag}
-                  disabled={addingTag || !newTagName.trim()}
-                  className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                >
-                  {addingTag ? "Adding..." : "+ Add"}
-                </button>
-              </div>
-
-              {/* Existing Tags */}
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    onClick={() => handleTagToggle(tag.id)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      formData.tags.includes(tag.id)
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
-                  >
-                    {tag.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Submit Buttons */}
-            <div className="flex gap-4">
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-              >
-                {loading ? "Creating..." : "Create Post"}
-              </button>
               <button
                 type="button"
-                onClick={() => router.back()}
-                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
+                onClick={handleAddTag}
+                disabled={addingTag || !newTagName.trim()}
+                className="px-6 py-2 bg-red-600 hover:bg-red-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
               >
-                Cancel
+                {addingTag ? "Adding..." : "Add Tag"}
               </button>
             </div>
-          </form>
-        </div>
+
+            {/* Tag Selection */}
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <button
+                  key={tag.id}
+                  type="button"
+                  onClick={() => handleTagToggle(tag.id)}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    formData.tags.includes(tag.id)
+                      ? "bg-red-600 text-white"
+                      : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                  }`}
+                >
+                  #{tag.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex gap-4 pt-6">
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 px-8 py-4 bg-red-600 hover:bg-red-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-all duration-300 shadow-lg hover:shadow-red-600/50"
+            >
+              {loading ? "Publishing..." : "Publish Post"}
+            </button>
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
