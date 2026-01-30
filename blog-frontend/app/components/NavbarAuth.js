@@ -11,13 +11,18 @@ export default function NavbarAuth() {
     <>
       {user ? (
         <>
-          <Link href="/create-post" className="hover:text-gray-300">
-            Create Post
+          <Link
+            href="/create-post"
+            className="text-slate-300 hover:text-amber-500 font-medium transition-colors text-sm tracking-wide"
+          >
+            Write
           </Link>
-          <span className="text-gray-300">Welcome, {user.username}!</span>
+          <span className="text-slate-400 font-medium text-sm">
+            {user.username}
+          </span>
           <button
             onClick={logout}
-            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+            className="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-md font-medium transition-all border border-slate-700 hover:border-slate-600 text-sm"
           >
             Logout
           </button>
@@ -26,13 +31,13 @@ export default function NavbarAuth() {
         <>
           <Link
             href="/login"
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
+            className="px-5 py-2 bg-slate-800/50 hover:bg-slate-800 text-slate-300 rounded-md font-medium transition-all border border-slate-700/50 hover:border-slate-600 text-sm"
           >
             Login
           </Link>
           <Link
             href="/signup"
-            className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded"
+            className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-md font-semibold transition-all shadow-lg shadow-amber-500/20 text-sm"
           >
             Sign Up
           </Link>
