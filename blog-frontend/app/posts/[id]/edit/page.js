@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { use } from "react";
+import Image from "next/image";
 import Navbar from "../../../components/Navbar";
 import { useAuth } from "../../../context/AuthContext";
 import { postsApi, categoriesApi, tagsApi } from "../../../../lib/api";
@@ -25,6 +26,9 @@ export default function EditPostPage({ params }) {
     category: "",
     tags: [],
   });
+  const [featuredImage, setFeaturedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [existingImage, setExistingImage] = useState(null);
 
   // Fetch post, categories, and tags
   useEffect(() => {
@@ -47,6 +51,12 @@ export default function EditPostPage({ params }) {
           category: postData.category?.id || "",
           tags: postData.tags?.map((tag) => tag.id) || [],
         });
+
+        // Set existing image if present
+        if (postData.featured_image) {
+          setExistingImage(postData.featured_image);
+          setImagePreview(postData.featured_image);
+        }
       } catch (err) {
         setError("Failed to load post: " + err.message);
       } finally {
@@ -72,6 +82,24 @@ export default function EditPostPage({ params }) {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFeaturedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFeaturedImage(null);
+    setImagePreview(null);
+    setExistingImage(null);
+  };
+
   const handleTagToggle = (tagId) => {
     setFormData((prev) => ({
       ...prev,
@@ -87,7 +115,24 @@ export default function EditPostPage({ params }) {
     setError("");
 
     try {
-      await postsApi.update(resolvedParams.id, formData);
+      // Use FormData if there's a new image or if we need to handle file uploads
+      let postData;
+      if (featuredImage || !existingImage) {
+        postData = new FormData();
+        postData.append("title", formData.title);
+        postData.append("content", formData.content);
+        postData.append("category", formData.category);
+        formData.tags.forEach((tagId) => {
+          postData.append("tags", tagId);
+        });
+        if (featuredImage) {
+          postData.append("featured_image", featuredImage);
+        }
+      } else {
+        postData = formData;
+      }
+
+      await postsApi.update(resolvedParams.id, postData);
       router.push(`/posts/${resolvedParams.id}`);
     } catch (err) {
       setError(err.message);
@@ -187,6 +232,64 @@ export default function EditPostPage({ params }) {
               rows="12"
               className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
             />
+          </div>
+
+          {/* Featured Image */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Featured Image (Optional)
+            </label>
+            <div className="space-y-4">
+              {imagePreview ? (
+                <div className="relative w-full h-64">
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    fill
+                    className="object-cover rounded-lg border border-slate-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors z-10"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    id="featured-image"
+                  />
+                  <label
+                    htmlFor="featured-image"
+                    className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-slate-700 rounded-lg cursor-pointer hover:border-red-600 hover:bg-slate-900/50 transition-all"
+                  >
+                    <svg
+                      className="w-12 h-12 text-slate-500 mb-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
+                    <p className="text-slate-400 mb-1">Click to upload image</p>
+                    <p className="text-slate-500 text-sm">
+                      PNG, JPG, GIF up to 10MB
+                    </p>
+                  </label>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Category */}

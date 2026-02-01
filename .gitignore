@@ -1,1 +1,5 @@
+# Python virtual environment
 venv
+
+# GitHub Copilot agent configurations (personal workspace settings)
+.github/agents/

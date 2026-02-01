@@ -28,6 +28,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     category= models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
     tags=models.ManyToManyField(Tag, blank=True, related_name="posts")
+    featured_image=models.ImageField(upload_to='posts_images',null=True,blank=True)
 
     def __str__(self):
         return self.title

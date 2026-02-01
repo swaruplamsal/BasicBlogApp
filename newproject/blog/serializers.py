@@ -26,13 +26,14 @@ class PostSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     comment_count = serializers.SerializerMethodField()
+    featured_image=serializers.ImageField(required=False)
 
     class Meta:
         model = Post
         fields = [
             'id', 'title', 'content', 'author', 'author_username',
             'category', 'category_name', 'tags', 'created_at', 
-            'updated_at', 'comment_count'
+            'updated_at', 'comment_count', 'featured_image'
         ]
         read_only_fields = ['author', 'created_at', 'updated_at']
 

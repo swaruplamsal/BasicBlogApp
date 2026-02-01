@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import Navbar from "../../components/Navbar";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { useAuth } from "../../context/AuthContext";
@@ -24,6 +25,8 @@ export default function CreatePostPage() {
     category: "",
     tags: [],
   });
+  const [featuredImage, setFeaturedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   // Fetch categories and tags on mount
   useEffect(() => {
@@ -62,6 +65,23 @@ export default function CreatePostPage() {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFeaturedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFeaturedImage(null);
+    setImagePreview(null);
+  };
+
   const handleTagToggle = (tagId) => {
     setFormData((prev) => ({
       ...prev,
@@ -97,7 +117,22 @@ export default function CreatePostPage() {
     setError("");
 
     try {
-      const post = await postsApi.create(formData);
+      // Use FormData if there's an image, otherwise use JSON
+      let postData;
+      if (featuredImage) {
+        postData = new FormData();
+        postData.append("title", formData.title);
+        postData.append("content", formData.content);
+        postData.append("category", formData.category);
+        formData.tags.forEach((tagId) => {
+          postData.append("tags", tagId);
+        });
+        postData.append("featured_image", featuredImage);
+      } else {
+        postData = formData;
+      }
+
+      const post = await postsApi.create(postData);
       router.push(`/posts/${post.id}`);
     } catch (err) {
       setError(err.message);
@@ -183,6 +218,64 @@ export default function CreatePostPage() {
               className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent resize-none"
               placeholder="Tell your story..."
             />
+          </div>
+
+          {/* Featured Image */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-300 mb-3">
+              Featured Image (Optional)
+            </label>
+            <div className="space-y-4">
+              {imagePreview ? (
+                <div className="relative w-full h-64">
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    fill
+                    className="object-cover rounded-lg border border-slate-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors z-10"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    id="featured-image"
+                  />
+                  <label
+                    htmlFor="featured-image"
+                    className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-slate-700 rounded-lg cursor-pointer hover:border-red-600 hover:bg-slate-900/50 transition-all"
+                  >
+                    <svg
+                      className="w-12 h-12 text-slate-500 mb-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
+                    <p className="text-slate-400 mb-1">Click to upload image</p>
+                    <p className="text-slate-500 text-sm">
+                      PNG, JPG, GIF up to 10MB
+                    </p>
+                  </label>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Category */}

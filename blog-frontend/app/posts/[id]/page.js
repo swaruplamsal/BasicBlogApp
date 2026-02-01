@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "../../components/Navbar";
 import CommentList from "../../components/CommentList";
 import CommentForm from "../../components/CommentForm";
@@ -35,6 +36,19 @@ export default async function PostDetailPage({ params }) {
               >
                 {post.category.name}
               </Link>
+            )}
+
+            {/* Featured Image */}
+            {post.featured_image && (
+              <div className="relative w-full h-96 rounded-xl overflow-hidden border border-slate-800">
+                <Image
+                  src={post.featured_image}
+                  alt={post.title}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
             )}
 
             {/* Title */}

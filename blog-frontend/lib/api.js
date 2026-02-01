@@ -53,17 +53,59 @@ export const postsApi = {
 
   getById: (id) => apiCall(`/posts/${id}/`),
 
-  create: (data) =>
-    apiCall("/posts/", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+  create: (data) => {
+    // Check if data is FormData (for file uploads)
+    const isFormData = data instanceof FormData;
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-  update: (id, data) =>
-    apiCall(`/posts/${id}/`, {
+    return fetch(`${API_URL}/posts/`, {
+      method: "POST",
+      headers: {
+        ...(token && { Authorization: `Token ${token}` }),
+        // Don't set Content-Type for FormData - browser sets it with boundary
+        ...(!isFormData && { "Content-Type": "application/json" }),
+      },
+      body: isFormData ? data : JSON.stringify(data),
+    }).then(async (response) => {
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.detail ||
+            errorData.error ||
+            `API Error: ${response.status}`,
+        );
+      }
+      return response.json();
+    });
+  },
+
+  update: (id, data) => {
+    // Check if data is FormData (for file uploads)
+    const isFormData = data instanceof FormData;
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+    return fetch(`${API_URL}/posts/${id}/`, {
       method: "PUT",
-      body: JSON.stringify(data),
-    }),
+      headers: {
+        ...(token && { Authorization: `Token ${token}` }),
+        // Don't set Content-Type for FormData - browser sets it with boundary
+        ...(!isFormData && { "Content-Type": "application/json" }),
+      },
+      body: isFormData ? data : JSON.stringify(data),
+    }).then(async (response) => {
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.detail ||
+            errorData.error ||
+            `API Error: ${response.status}`,
+        );
+      }
+      return response.json();
+    });
+  },
 
   delete: (id) =>
     apiCall(`/posts/${id}/`, {
