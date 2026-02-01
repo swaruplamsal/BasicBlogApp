@@ -209,7 +209,7 @@ basic-blog-app/
 
 ## Future Enhancements
 
-- [ ] Image upload for posts
+- [✔] Image upload for posts
 - [ ] Rich text editor
 - [ ] Post search functionality
 - [ ] User profiles

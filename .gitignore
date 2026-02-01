@@ -2,4 +2,4 @@
 venv
 
 # GitHub Copilot agent configurations (personal workspace settings)
-.github/agents/
+.github/agents/``
