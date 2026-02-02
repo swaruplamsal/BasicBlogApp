@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { use } from "react";
 import Image from "next/image";
 import Navbar from "../../../components/Navbar";
+import RichTextEditor from "../../../components/RichTextEditor";
 import { useAuth } from "../../../context/AuthContext";
 import { postsApi, categoriesApi, tagsApi } from "../../../../lib/api";
 
@@ -224,13 +225,11 @@ export default function EditPostPage({ params }) {
             <label className="block text-sm font-semibold text-slate-300 mb-3">
               Content
             </label>
-            <textarea
-              name="content"
-              value={formData.content}
-              onChange={handleChange}
-              required
-              rows="12"
-              className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-600 resize-none"
+            <RichTextEditor
+              content={formData.content}
+              onChange={(html) =>
+                setFormData((prev) => ({ ...prev, content: html }))
+              }
             />
           </div>
 
