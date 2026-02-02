@@ -2,6 +2,14 @@ import Link from "next/link";
 import Navbar from "./components/Navbar";
 import { postsApi } from "../lib/api";
 
+// Helper function to strip HTML tags for preview
+function stripHtml(html) {
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export default async function HomePage() {
   let posts = [];
   let error = null;
@@ -110,7 +118,7 @@ export default async function HomePage() {
 
                     {/* Excerpt */}
                     <p className="text-slate-400 line-clamp-3 leading-relaxed">
-                      {post.content.substring(0, 150)}...
+                      {stripHtml(post.content).substring(0, 150)}...
                     </p>
 
                     {/* Meta Info */}
