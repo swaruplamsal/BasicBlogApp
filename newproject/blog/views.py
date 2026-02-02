@@ -25,6 +25,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().select_related('author', 'post')
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    
+    def get_queryset(self):
+        """Filter comments by post if post parameter is provided"""
+        queryset = Comment.objects.all().select_related('author', 'post')
+        post_id = self.request.query_params.get('post', None)
+        if post_id is not None:
+            queryset = queryset.filter(post_id=post_id)
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

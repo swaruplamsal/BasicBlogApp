@@ -7,6 +7,10 @@ import EditButton from "../../components/EditButton";
 import ReadingProgress from "../../components/ReadingProgress";
 import { postsApi, commentsApi } from "../../../lib/api";
 
+// Disable caching for this page
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function PostDetailPage({ params }) {
   // ✅ Await params first (Next.js 15 requirement)
   const resolvedParams = await params;
