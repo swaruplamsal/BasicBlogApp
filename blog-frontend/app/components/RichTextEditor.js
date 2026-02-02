@@ -23,6 +23,11 @@ export default function RichTextEditor({ content, onChange }) {
       // Send HTML back to parent
       onChange(editor.getHTML());
     },
+    editorProps: {
+      attributes: {
+        class: "focus:outline-none",
+      },
+    },
   });
 
   const addImage = async () => {
@@ -112,7 +117,7 @@ export default function RichTextEditor({ content, onChange }) {
         <button
           onClick={addImage}
           disabled={uploading}
-          className="px-4 py-2 rounded-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-500 hover:to-pink-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-purple-500/20"
+          className="px-4 py-2 rounded-lg font-semibold bg-gradient-to-r from-amber-600 to-red-600 text-white hover:from-amber-500 hover:to-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-amber-500/20"
           type="button"
         >
           {uploading ? (
