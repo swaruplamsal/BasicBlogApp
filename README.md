@@ -209,13 +209,16 @@ basic-blog-app/
 
 ## Future Enhancements
 
-- [✔] Image upload for posts
-- [ ] Rich text editor
+- [✔] Image upload for posts (featured images)
+- [✔] Rich text editor with inline image uploads
 - [ ] Post search functionality
 - [ ] User profiles
 - [ ] Post likes/reactions
 - [ ] Email notifications
 - [ ] Social media sharing
+- [ ] Draft posts functionality
+- [ ] Code syntax highlighting
+- [ ] Table of contents for long posts
 
 ## License
 
