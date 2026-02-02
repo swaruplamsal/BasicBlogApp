@@ -106,11 +106,42 @@ export default async function PostDetailPage({ params }) {
           </header>
 
           {/* Content */}
-          <div className="prose prose-invert prose-lg max-w-none">
-            <div
-              className="text-slate-300 leading-relaxed text-lg"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+          <div
+            className="prose prose-invert prose-lg max-w-none mb-12
+            [&_p]:text-slate-300
+            [&_p]:text-lg
+            [&_p]:leading-relaxed
+            [&_p]:mb-6
+            [&_h2]:text-4xl
+            [&_h2]:font-bold
+            [&_h2]:bg-gradient-to-r
+            [&_h2]:from-red-400
+            [&_h2]:to-amber-400
+            [&_h2]:bg-clip-text
+            [&_h2]:text-transparent
+            [&_h2]:mt-12
+            [&_h2]:mb-6
+            [&_h2]:leading-tight
+            [&_strong]:text-slate-100
+            [&_strong]:font-bold
+            [&_em]:italic
+            [&_em]:text-slate-400
+            [&_ul]:list-disc
+            [&_ul]:ml-6
+            [&_ul]:my-6
+            [&_ul]:space-y-2
+            [&_li]:text-slate-300
+            [&_li]:text-lg
+            [&_li]:leading-relaxed
+            [&_img]:rounded-xl
+            [&_img]:my-8
+            [&_img]:w-full
+            [&_img]:border
+            [&_img]:border-slate-700/50
+            [&_img]:shadow-2xl
+            [&_img]:shadow-black/50"
+          >
+            <div dangerouslySetInnerHTML={{ __html: post.content }} />
           </div>
 
           {/* Edit Button (Client Component) */}
