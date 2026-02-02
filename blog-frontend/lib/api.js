@@ -164,6 +164,36 @@ export const authApi = {
   getCurrentUser: () => apiCall("/auth/user/"),
 };
 
+// Image Upload API
+export const imageApi = {
+  upload: async (imageFile, postId = null) => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    if (postId) {
+      formData.append("post_id", postId);
+    }
+
+    const response = await fetch(`${API_URL}/upload-image/`, {
+      method: "POST",
+      headers: {
+        ...(token && { Authorization: `Token ${token}` }),
+        // Don't set Content-Type for FormData
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "Failed to upload image");
+    }
+
+    return response.json();
+  },
+};
+
 export default {
   posts: postsApi,
   comments: commentsApi,

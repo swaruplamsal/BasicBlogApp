@@ -107,9 +107,10 @@ export default async function PostDetailPage({ params }) {
 
           {/* Content */}
           <div className="prose prose-invert prose-lg max-w-none">
-            <div className="text-slate-300 leading-relaxed whitespace-pre-wrap text-lg">
-              {post.content}
-            </div>
+            <div
+              className="text-slate-300 leading-relaxed text-lg"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
           </div>
 
           {/* Edit Button (Client Component) */}

@@ -44,3 +44,15 @@ class Comment(models.Model):
     
     def __str__(self):
         return f'Comment by {self.author.username} on {self.post.title}'
+    
+class PostImage(models.Model):
+    post=models.ForeignKey(Post, on_delete=models.CASCADE,related_name='images', null=True, blank=True)
+    image=models.ImageField(upload_to='post_content_images/')
+    uploaded_at=models.DateTimeField(auto_now_add=True)
+    order=models.IntegerField(default=0) #For ordering if needed
+
+    class Meta:
+        ordering=['order','uploaded_at']
+
+    def __str__(self):
+        return f'Image for {self.post.title if self.post else "Unattached"}'
