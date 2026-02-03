@@ -234,8 +234,8 @@ basic-blog-app/
 
 - [✔] Image upload for posts (featured images)
 - [✔] Rich text editor with inline image uploads
+- [✔] User profiles
 - [ ] Post search functionality
-- [ ] User profiles
 - [ ] Post likes/reactions
 - [ ] Email notifications
 - [ ] Social media sharing
