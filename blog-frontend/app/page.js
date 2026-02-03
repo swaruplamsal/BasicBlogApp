@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Navbar from "./components/Navbar";
+import Avatar from "./components/Avatar";
 import { postsApi } from "../lib/api";
 
 // Helper function to strip HTML tags for preview
@@ -101,62 +102,74 @@ export default async function HomePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post) => (
-              <Link key={post.id} href={`/posts/${post.id}`} className="group">
-                <article className="h-full bg-slate-900 rounded-2xl border border-slate-800 hover:border-red-600/50 transition-all duration-300 overflow-hidden hover:shadow-xl hover:shadow-red-600/10">
-                  <div className="p-8 space-y-4">
-                    {/* Category Badge */}
-                    {post.category && (
-                      <span className="inline-block px-3 py-1 text-xs font-semibold text-red-400 bg-red-950/50 rounded-full border border-red-900/50">
-                        {post.category.name}
-                      </span>
-                    )}
+              <article
+                key={post.id}
+                className="group h-full bg-slate-900 rounded-2xl border border-slate-800 hover:border-red-600/50 transition-all duration-300 overflow-hidden hover:shadow-xl hover:shadow-red-600/10"
+              >
+                <div className="p-8 space-y-4">
+                  {/* Category Badge */}
+                  {post.category && (
+                    <span className="inline-block px-3 py-1 text-xs font-semibold text-red-400 bg-red-950/50 rounded-full border border-red-900/50">
+                      {post.category.name}
+                    </span>
+                  )}
 
-                    {/* Title */}
+                  {/* Title */}
+                  <Link href={`/posts/${post.id}`} className="block">
                     <h3 className="text-2xl font-bold text-slate-100 group-hover:text-red-400 transition-colors line-clamp-2">
                       {post.title}
                     </h3>
+                  </Link>
 
-                    {/* Excerpt */}
+                  {/* Excerpt */}
+                  <Link href={`/posts/${post.id}`} className="block">
                     <p className="text-slate-400 line-clamp-3 leading-relaxed">
                       {stripHtml(post.content).substring(0, 150)}...
                     </p>
+                  </Link>
 
-                    {/* Meta Info */}
-                    <div className="flex items-center gap-4 pt-4 border-t border-slate-800">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-full bg-linear-to-br from-red-600 to-amber-600 flex items-center justify-center text-white text-sm font-bold">
-                          {post.author_username?.charAt(0).toUpperCase() || "A"}
-                        </div>
-                        <span className="text-sm text-slate-400">
-                          {post.author_username || "Anonymous"}
-                        </span>
-                      </div>
-                      <span className="text-slate-600">•</span>
-                      <time className="text-sm text-slate-500">
-                        {new Date(post.created_at).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </time>
-                    </div>
-
-                    {/* Tags */}
-                    {post.tags && post.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2 pt-2">
-                        {post.tags.slice(0, 3).map((tag) => (
-                          <span
-                            key={tag.id}
-                            className="text-xs text-slate-500 bg-slate-800/50 px-2 py-1 rounded"
-                          >
-                            #{tag.name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                  {/* Meta Info */}
+                  <div className="flex items-center gap-4 pt-4 border-t border-slate-800">
+                    <Link
+                      href={`/profile/${post.author_id || post.author}`}
+                      className="flex items-center gap-2 group/author"
+                    >
+                      <Avatar
+                        userId={post.author_id || post.author}
+                        username={post.author_username}
+                        avatarUrl={post.author_avatar}
+                        size="sm"
+                        showLink={false}
+                      />
+                      <span className="text-sm text-slate-400 group-hover/author:text-red-400 transition-colors">
+                        {post.author_username || "Anonymous"}
+                      </span>
+                    </Link>
+                    <span className="text-slate-600">•</span>
+                    <time className="text-sm text-slate-500">
+                      {new Date(post.created_at).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </time>
                   </div>
-                </article>
-              </Link>
+
+                  {/* Tags */}
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {post.tags.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag.id}
+                          className="text-xs text-slate-500 bg-slate-800/50 px-2 py-1 rounded"
+                        >
+                          #{tag.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </article>
             ))}
           </div>
         )}

@@ -194,10 +194,66 @@ export const imageApi = {
   },
 };
 
+// Profile API
+export const profileApi = {
+  // Get user profile by ID
+  getById: (userId) => apiCall(`/users/${userId}/`),
+
+  // Get user profile by username
+  getByUsername: (username) => apiCall(`/users/username/${username}/`),
+
+  // Get current user's profile
+  getMyProfile: () => apiCall("/profile/"),
+
+  // Update current user's profile
+  updateMyProfile: (data) =>
+    apiCall("/profile/", {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+
+  // Upload avatar
+  uploadAvatar: async (imageFile) => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+    const formData = new FormData();
+    formData.append("avatar", imageFile);
+
+    const response = await fetch(`${API_URL}/profile/avatar/`, {
+      method: "POST",
+      headers: {
+        ...(token && { Authorization: `Token ${token}` }),
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "Failed to upload avatar");
+    }
+
+    return response.json();
+  },
+
+  // Delete avatar
+  deleteAvatar: () =>
+    apiCall("/profile/avatar/delete/", {
+      method: "DELETE",
+    }),
+
+  // Get user's posts
+  getUserPosts: (userId) => apiCall(`/users/${userId}/posts/`),
+
+  // Get user's comments
+  getUserComments: (userId) => apiCall(`/users/${userId}/comments/`),
+};
+
 export default {
   posts: postsApi,
   comments: commentsApi,
   categories: categoriesApi,
   tags: tagsApi,
   auth: authApi,
+  profile: profileApi,
 };

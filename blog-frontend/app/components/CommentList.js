@@ -1,4 +1,7 @@
 // app/components/CommentList.js
+import Link from "next/link";
+import Avatar from "./Avatar";
+
 export default function CommentList({ comments }) {
   if (!comments || comments.length === 0) {
     return (
@@ -16,13 +19,20 @@ export default function CommentList({ comments }) {
           className="p-6 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-slate-700 transition-all duration-300"
         >
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-600 to-amber-600 flex items-center justify-center text-white text-sm font-bold shadow-lg">
-              {(comment.author_username || "U").charAt(0).toUpperCase()}
-            </div>
+            <Avatar
+              userId={comment.author_id || comment.author}
+              username={comment.author_username}
+              avatarUrl={comment.author_avatar}
+              size="md"
+              showLink={true}
+            />
             <div className="flex flex-col">
-              <strong className="font-semibold text-slate-200">
+              <Link
+                href={`/profile/${comment.author_id || comment.author}`}
+                className="font-semibold text-slate-200 hover:text-red-400 transition-colors"
+              >
                 {comment.author_username}
-              </strong>
+              </Link>
               <span className="text-xs text-slate-500">
                 {new Date(comment.created_at).toLocaleDateString("en-US", {
                   year: "numeric",

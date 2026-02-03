@@ -6,11 +6,12 @@ A full-stack blog application built with Django REST Framework (backend) and Nex
 
 ### Backend (Django REST Framework)
 
-- 🔐 User authentication (login/signup with JWT)
+- 🔐 User authentication (login/signup with Token auth)
 - 📝 CRUD operations for blog posts
 - 💬 Comment system for posts
 - 🏷️ Categories and tags for posts
-- 👤 User-specific content management
+- 👤 User profiles with avatars and social links
+- 📊 User statistics (post count, comment count)
 - 🔒 Permission-based access control
 
 ### Frontend (Next.js + React)
@@ -18,6 +19,8 @@ A full-stack blog application built with Django REST Framework (backend) and Nex
 - ⚡ Server-side rendering with Next.js 16
 - 🎨 Responsive UI with Tailwind CSS
 - 🔐 Protected routes and authentication context
+- 👥 User profile pages with stats and activity
+- ✏️ Profile editing with avatar upload
 - 📱 Mobile-friendly design
 - ⏳ Loading states and error handling
 - 📊 Reading progress indicator
@@ -147,27 +150,39 @@ basic-blog-app/
 
 ### Authentication
 
-- `POST /api/signup/` - User registration
-- `POST /api/login/` - User login
-- `POST /api/logout/` - User logout
+- `POST /api/v1/auth/signup/` - User registration
+- `POST /api/v1/auth/login/` - User login
+- `POST /api/v1/auth/logout/` - User logout
+- `GET /api/v1/auth/user/` - Get current user
 
 ### Posts
 
-- `GET /api/posts/` - List all posts
-- `GET /api/posts/{id}/` - Get single post
-- `POST /api/posts/` - Create new post (authenticated)
-- `PUT /api/posts/{id}/` - Update post (owner only)
-- `DELETE /api/posts/{id}/` - Delete post (owner only)
+- `GET /api/v1/posts/` - List all posts
+- `GET /api/v1/posts/{id}/` - Get single post
+- `POST /api/v1/posts/` - Create new post (authenticated)
+- `PUT /api/v1/posts/{id}/` - Update post (owner only)
+- `DELETE /api/v1/posts/{id}/` - Delete post (owner only)
 
 ### Comments
 
-- `GET /api/posts/{id}/comments/` - Get post comments
-- `POST /api/posts/{id}/comments/` - Add comment (authenticated)
+- `GET /api/v1/comments/?post={id}` - Get post comments
+- `POST /api/v1/comments/` - Add comment (authenticated)
 
 ### Categories & Tags
 
-- `GET /api/categories/` - List all categories
-- `GET /api/tags/` - List all tags
+- `GET /api/v1/categories/` - List all categories
+- `GET /api/v1/tags/` - List all tags
+
+### User Profiles
+
+- `GET /api/v1/profile/` - Get current user's profile (authenticated)
+- `PATCH /api/v1/profile/` - Update current user's profile (authenticated)
+- `POST /api/v1/profile/avatar/` - Upload avatar (authenticated)
+- `DELETE /api/v1/profile/avatar/delete/` - Delete avatar (authenticated)
+- `GET /api/v1/users/{id}/` - Get user profile by ID
+- `GET /api/v1/users/{id}/posts/` - Get user's posts
+- `GET /api/v1/users/{id}/comments/` - Get user's recent comments
+- `GET /api/v1/users/username/{username}/` - Get user profile by username
 
 ## Database Models
 
@@ -176,6 +191,7 @@ basic-blog-app/
 - Title, content, author
 - Category and tags
 - Published status
+- Featured image
 - Timestamps (created_at, updated_at)
 
 ### Comment
@@ -190,6 +206,13 @@ basic-blog-app/
 ### Tag
 
 - Name, slug
+
+### UserProfile
+
+- User (one-to-one with Django User)
+- Avatar, bio, location
+- Social links (website, Twitter, GitHub, LinkedIn)
+- Timestamps (created_at, updated_at)
 
 ## Usage
 
