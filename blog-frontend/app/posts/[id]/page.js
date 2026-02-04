@@ -13,7 +13,8 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function PostDetailPage({ params }) {
-  const { id } = params;
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
 
   let post;
   let comments = [];

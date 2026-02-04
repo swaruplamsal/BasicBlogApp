@@ -14,7 +14,7 @@ export default function AuthorLink({
   return (
     <Link
       href={`/profile/${userId}`}
-      className={`inline-flex items-center gap-2 group ${className}`}
+      className={`inline-flex items-center gap-2 group cursor-pointer ${className}`}
     >
       {showAvatar && (
         <Avatar

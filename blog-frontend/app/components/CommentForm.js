@@ -44,7 +44,7 @@ export default function CommentForm({ postId }) {
         <p className="text-slate-400 mb-4">Sign in to leave a comment</p>
         <button
           onClick={() => router.push("/login")}
-          className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors"
+          className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors cursor-pointer"
         >
           Sign In
         </button>
@@ -70,7 +70,7 @@ export default function CommentForm({ postId }) {
       <button
         type="submit"
         disabled={isSubmitting || !comment.trim()}
-        className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+        className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors cursor-pointer"
       >
         {isSubmitting ? "Posting..." : "Post Comment"}
       </button>

@@ -23,7 +23,7 @@ export default function Avatar({
 
   const avatarContent = avatarUrl ? (
     <div
-      className={`${sizeClasses[size]} rounded-full overflow-hidden border-2 border-slate-700 hover:border-red-500 transition-colors ${className}`}
+      className={`${sizeClasses[size]} rounded-full overflow-hidden border-2 border-slate-700 hover:border-red-500/60 transition-colors cursor-pointer ${className}`}
     >
       <Image
         src={avatarUrl}
@@ -35,7 +35,7 @@ export default function Avatar({
     </div>
   ) : (
     <div
-      className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-red-600 to-amber-600 flex items-center justify-center text-white font-bold shadow-lg hover:shadow-red-600/30 transition-all ${className}`}
+      className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-slate-700 to-slate-600 flex items-center justify-center text-white font-semibold shadow-lg hover:shadow-red-500/20 transition-all cursor-pointer ${className}`}
     >
       {(username || "U").charAt(0).toUpperCase()}
     </div>
@@ -45,7 +45,7 @@ export default function Avatar({
     return (
       <Link
         href={`/profile/${userId}`}
-        className="relative block hover:scale-105 transition-transform"
+        className="relative block hover:scale-105 transition-transform cursor-pointer"
       >
         {avatarContent}
       </Link>

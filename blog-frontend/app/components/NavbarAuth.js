@@ -31,7 +31,7 @@ export default function NavbarAuth() {
         <>
           <Link
             href="/posts/create"
-            className="link-nav font-medium text-sm tracking-wide"
+            className="link-nav font-medium text-sm tracking-wide cursor-pointer"
           >
             Write
           </Link>
@@ -40,7 +40,7 @@ export default function NavbarAuth() {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
             >
               <Avatar
                 userId={user.id}
@@ -84,7 +84,7 @@ export default function NavbarAuth() {
                 <Link
                   href={`/profile/${user.id}`}
                   onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800/50 transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800/50 transition-colors cursor-pointer"
                 >
                   <svg
                     className="w-5 h-5"
@@ -104,7 +104,7 @@ export default function NavbarAuth() {
                 <Link
                   href="/profile/edit"
                   onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800/50 transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800/50 transition-colors cursor-pointer"
                 >
                   <svg
                     className="w-5 h-5"
@@ -133,7 +133,7 @@ export default function NavbarAuth() {
                     setDropdownOpen(false);
                     logout();
                   }}
-                  className="flex items-center gap-3 w-full px-4 py-3 text-red-400 hover:bg-red-950/30 transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-3 text-red-400 hover:bg-red-950/30 transition-colors cursor-pointer"
                 >
                   <svg
                     className="w-5 h-5"
@@ -158,7 +158,7 @@ export default function NavbarAuth() {
         <>
           <Link
             href="/login"
-            className="px-5 py-2 rounded-md font-medium transition-all text-sm"
+            className="px-5 py-2 rounded-md font-medium transition-all text-sm cursor-pointer"
             style={{
               backgroundColor: "rgba(90, 69, 69, 0.5)",
               color: "#cbd5e1",
@@ -169,7 +169,7 @@ export default function NavbarAuth() {
           </Link>
           <Link
             href="/signup"
-            className="btn-primary px-5 py-2 text-white rounded-md font-semibold shadow-lg text-sm"
+            className="btn-primary px-5 py-2 text-white rounded-md font-semibold shadow-lg text-sm cursor-pointer"
           >
             Sign Up
           </Link>

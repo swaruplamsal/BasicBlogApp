@@ -14,7 +14,7 @@ export default function EditProfileButton({ profileUserId }) {
   return (
     <Link
       href="/profile/edit"
-      className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-600/50 text-slate-200 font-medium rounded-lg transition-all"
+      className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-600/50 text-slate-200 font-medium rounded-lg transition-all cursor-pointer"
     >
       <svg
         className="w-4 h-4"

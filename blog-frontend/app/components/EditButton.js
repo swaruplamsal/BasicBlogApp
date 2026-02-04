@@ -13,7 +13,7 @@ export default function EditButton({ postId, authorId }) {
   return (
     <Link
       href={`/posts/${postId}/edit`}
-      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-600 to-red-600 hover:from-amber-500 hover:to-red-500 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-amber-500/30"
+      className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-600 to-red-600 hover:from-amber-500 hover:to-red-500 text-white font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-amber-500/30 cursor-pointer"
     >
       <svg
         className="w-4 h-4"

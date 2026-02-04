@@ -39,7 +39,10 @@ export default function SignupPage() {
     >
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 mb-6 cursor-pointer"
+          >
             <div
               className="w-10 h-10 rounded-lg flex items-center justify-center shadow-lg"
               style={{
@@ -170,7 +173,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary w-full text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-lg"
+              className="btn-primary w-full text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-lg cursor-pointer disabled:cursor-not-allowed"
             >
               {loading ? "Creating account..." : "Sign Up"}
             </button>
@@ -178,7 +181,10 @@ export default function SignupPage() {
 
           <p className="text-center mt-6" style={{ color: "#94a3b8" }}>
             Already have an account?{" "}
-            <Link href="/login" className="link-red font-semibold">
+            <Link
+              href="/login"
+              className="link-red font-semibold cursor-pointer"
+            >
               Login
             </Link>
           </p>

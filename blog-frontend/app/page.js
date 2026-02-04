@@ -122,7 +122,10 @@ export default async function HomePage() {
                   </Link>
 
                   {/* Excerpt */}
-                  <Link href={`/posts/${post.id}`} className="block">
+                  <Link
+                    href={`/posts/${post.id}`}
+                    className="block cursor-pointer"
+                  >
                     <p className="text-slate-400 line-clamp-3 leading-relaxed">
                       {stripHtml(post.content).substring(0, 150)}...
                     </p>
@@ -132,7 +135,7 @@ export default async function HomePage() {
                   <div className="flex items-center gap-4 pt-4 border-t border-slate-800">
                     <Link
                       href={`/profile/${post.author_id || post.author}`}
-                      className="flex items-center gap-2 group/author"
+                      className="flex items-center gap-2 group/author cursor-pointer"
                     >
                       <Avatar
                         userId={post.author_id || post.author}
