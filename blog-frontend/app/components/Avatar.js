@@ -29,7 +29,7 @@ export default function Avatar({
         src={avatarUrl}
         alt={`${username}'s avatar`}
         fill
-        className="object-cover"
+        className="object-cover rounded-full"
         unoptimized
       />
     </div>

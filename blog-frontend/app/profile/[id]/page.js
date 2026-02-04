@@ -71,37 +71,32 @@ export default async function ProfilePage({ params }) {
       <Navbar />
 
       {/* Profile Header */}
-      <div className="relative">
-        {/* Gradient Background */}
-        <div className="absolute inset-0 h-64 bg-gradient-to-br from-red-950/40 via-slate-900 to-blue-950/40" />
-
-        <div className="relative max-w-5xl mx-auto px-6 pt-20 pb-12">
-          <div className="flex flex-col md:flex-row items-center md:items-end gap-8">
+      <div className="relative bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900">
+        <div className="max-w-6xl mx-auto px-6 py-16">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8">
             {/* Avatar */}
-            <div className="relative">
+            <div className="flex-shrink-0">
               <Avatar
                 userId={user.id}
                 username={user.username}
                 avatarUrl={avatarUrl}
                 size="3xl"
                 showLink={false}
-                className="border-4 border-slate-900 shadow-2xl"
+                className="border-4 border-slate-700 shadow-xl"
               />
             </div>
 
             {/* User Info */}
-            <div className="flex-1 text-center md:text-left space-y-4">
-              <div>
-                <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-red-400 via-amber-200 to-red-400 bg-clip-text text-transparent">
-                  {user.first_name && user.last_name
-                    ? `${user.first_name} ${user.last_name}`
-                    : user.username}
-                </h1>
-                <p className="text-xl text-slate-400 mt-1">@{user.username}</p>
-              </div>
+            <div className="flex-1 text-center lg:text-left">
+              <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">
+                {user.first_name && user.last_name
+                  ? `${user.first_name} ${user.last_name}`
+                  : user.username}
+              </h1>
+              <p className="text-lg text-slate-400 mb-4">@{user.username}</p>
 
               {profile.location && (
-                <div className="flex items-center justify-center md:justify-start gap-2 text-slate-400">
+                <div className="flex items-center justify-center lg:justify-start gap-2 text-slate-400 mb-4">
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -125,50 +120,60 @@ export default async function ProfilePage({ params }) {
                 </div>
               )}
 
-              {/* Edit Profile Button (client component - only shows for own profile) */}
-              <EditProfileButton profileUserId={user.id} />
+              {/* Quick Stats - Horizontal inline display */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-slate-300">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                  <span className="font-semibold">{user.post_count || 0}</span>
+                  <span>Posts</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <span className="font-semibold">
+                    {user.comment_count || 0}
+                  </span>
+                  <span>Comments</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                  <span className="font-semibold">
+                    {user.member_since
+                      ? new Date(user.member_since).getFullYear()
+                      : "N/A"}
+                  </span>
+                  <span>Joined</span>
+                </div>
+              </div>
+
+              {/* Bio */}
+              {profile.bio && (
+                <div className="mt-6 max-w-2xl">
+                  <p className="text-slate-300 leading-relaxed">
+                    {profile.bio}
+                  </p>
+                </div>
+              )}
+
+              {/* Edit Profile Button */}
+              <div className="mt-6">
+                <EditProfileButton profileUserId={user.id} />
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Sidebar - Stats & Bio */}
-          <div className="space-y-6">
-            {/* Stats */}
-            <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-6 max-w-3xl">
-              <h2 className="text-lg font-semibold text-slate-200 mb-6">
-                Statistics
-              </h2>
-
-              <ProfileStats
-                postCount={user.post_count}
-                commentCount={user.comment_count}
-                memberSince={user.member_since}
-              />
-            </div>
-
-            {/* Bio */}
-            {profile.bio && (
-              <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-6">
-                <h2 className="text-lg font-semibold text-slate-200 mb-4">
-                  About
-                </h2>
-                <p className="text-slate-400 leading-relaxed whitespace-pre-line">
-                  {profile.bio}
-                </p>
-              </div>
-            )}
-
-            {/* Social Links */}
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+          {/* Sidebar - Social Links */}
+          <div className="xl:col-span-1">
             {(profile.website ||
               profile.twitter ||
               profile.github ||
               profile.linkedin) && (
-              <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-6">
-                <h2 className="text-lg font-semibold text-slate-200 mb-4">
+              <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800/50 p-6">
+                <h2 className="text-lg font-semibold text-white mb-4">
                   Connect
                 </h2>
                 <SocialLinks
@@ -181,110 +186,127 @@ export default async function ProfilePage({ params }) {
             )}
           </div>
 
-          {/* Right Content - Posts & Comments */}
-          <div className="lg:col-span-2 space-y-8">
+          {/* Main Content - Posts & Comments */}
+          <div className="xl:col-span-3 space-y-8">
             {/* Posts Section */}
-            <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-6">
+            <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800/50 p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-slate-200">
-                  Posts ({posts.length})
+                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                  <div className="w-1 h-6 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full"></div>
+                  Recent Posts ({posts.length})
                 </h2>
               </div>
 
               {posts.length === 0 ? (
-                <p className="text-slate-400 text-center py-8">No posts yet.</p>
+                <div className="text-center py-12">
+                  <div className="text-slate-500 text-lg mb-2">
+                    No posts yet
+                  </div>
+                  <p className="text-slate-600 text-sm">
+                    When {user.username} publishes posts, they&apos;ll appear
+                    here.
+                  </p>
+                </div>
               ) : (
-                <div className="space-y-4">
-                  {posts.slice(0, 5).map((post) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {posts.slice(0, 6).map((post) => (
                     <Link
                       key={post.id}
                       href={`/posts/${post.id}`}
-                      className="block p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-red-600/50 transition-all group"
+                      className="group block p-5 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-slate-600/70 hover:bg-slate-800/70 transition-all duration-200"
                     >
-                      <h3 className="text-lg font-semibold text-slate-200 group-hover:text-red-400 transition-colors line-clamp-1">
+                      <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors line-clamp-2 mb-3">
                         {post.title}
                       </h3>
-                      <p className="text-slate-400 text-sm mt-2 line-clamp-2">
-                        {stripHtml(post.content).substring(0, 150)}...
+                      <p className="text-slate-400 text-sm line-clamp-3 mb-4">
+                        {stripHtml(post.content).substring(0, 120)}...
                       </p>
-                      <div className="flex items-center gap-4 mt-3 text-xs text-slate-500">
+                      <div className="flex items-center justify-between text-xs text-slate-500">
                         <span>
                           {new Date(post.created_at).toLocaleDateString(
                             "en-US",
-                            {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            },
+                            { month: "short", day: "numeric", year: "numeric" },
                           )}
                         </span>
-                        <span>•</span>
                         <span>{post.comment_count || 0} comments</span>
                       </div>
                     </Link>
                   ))}
+                </div>
+              )}
 
-                  {posts.length > 5 && (
-                    <p className="text-center text-slate-500 text-sm pt-4">
-                      And {posts.length - 5} more posts...
-                    </p>
-                  )}
+              {posts.length > 6 && (
+                <div className="text-center mt-8">
+                  <p className="text-slate-500 text-sm">
+                    And {posts.length - 6} more posts...
+                  </p>
                 </div>
               )}
             </div>
 
             {/* Recent Comments Section */}
-            <div className="bg-slate-900/50 rounded-2xl border border-slate-800 p-6">
-              <h2 className="text-xl font-semibold text-slate-200 mb-6">
+            <div className="bg-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-800/50 p-6">
+              <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+                <div className="w-1 h-6 bg-gradient-to-b from-green-500 to-green-600 rounded-full"></div>
                 Recent Activity
               </h2>
 
               {comments.length === 0 ? (
-                <p className="text-slate-400 text-center py-8">
-                  No recent comments.
-                </p>
+                <div className="text-center py-12">
+                  <div className="text-slate-500 text-lg mb-2">
+                    No recent comments
+                  </div>
+                  <p className="text-slate-600 text-sm">
+                    Activity will appear here when {user.username} engages with
+                    posts.
+                  </p>
+                </div>
               ) : (
                 <div className="space-y-4">
                   {comments.slice(0, 5).map((comment) => (
                     <Link
                       key={comment.id}
                       href={`/posts/${comment.post_id}`}
-                      className="block p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-red-600/50 transition-all group"
+                      className="group block p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-slate-600/70 hover:bg-slate-800/70 transition-all duration-200"
                     >
-                      <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                          />
-                        </svg>
-                        <span>
-                          Commented on{" "}
-                          <span className="text-slate-300 group-hover:text-red-400 transition-colors">
-                            {comment.post_title}
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center mt-1">
+                          <svg
+                            className="w-4 h-4 text-green-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                            />
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm text-slate-400 mb-2">
+                            Commented on{" "}
+                            <span className="text-white group-hover:text-green-400 transition-colors font-medium">
+                              {comment.post_title}
+                            </span>
+                          </div>
+                          <p className="text-slate-300 text-sm line-clamp-2 mb-2">
+                            &ldquo;{comment.content}&rdquo;
+                          </p>
+                          <span className="text-xs text-slate-600">
+                            {new Date(comment.created_at).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )}
                           </span>
-                        </span>
+                        </div>
                       </div>
-                      <p className="text-slate-400 text-sm line-clamp-2">
-                        &ldquo;{comment.content}&rdquo;
-                      </p>
-                      <span className="text-xs text-slate-600 mt-2 block">
-                        {new Date(comment.created_at).toLocaleDateString(
-                          "en-US",
-                          {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          },
-                        )}
-                      </span>
                     </Link>
                   ))}
                 </div>
