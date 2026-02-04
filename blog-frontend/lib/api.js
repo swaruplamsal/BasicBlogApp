@@ -161,7 +161,7 @@ export const authApi = {
       method: "POST",
     }),
 
-  getCurrentUser: () => apiCall("/auth/user/"),
+  getCurrentUser: () => apiCall("/profile/"),
 };
 
 // Image Upload API

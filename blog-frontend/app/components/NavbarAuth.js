@@ -45,7 +45,7 @@ export default function NavbarAuth() {
               <Avatar
                 userId={user.id}
                 username={user.username}
-                avatarUrl={user.avatar}
+                avatarUrl={user.profile?.avatar}
                 size="sm"
                 showLink={false}
               />
