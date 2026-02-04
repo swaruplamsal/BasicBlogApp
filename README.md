@@ -24,6 +24,8 @@ A full-stack blog application built with Django REST Framework (backend) and Nex
 - 📱 Mobile-friendly design
 - ⏳ Loading states and error handling
 - 📊 Reading progress indicator
+- 📝 Rich text editor with inline image support
+- 🖼️ Featured image upload for posts
 
 ## Project Structure
 
@@ -52,14 +54,15 @@ basic-blog-app/
 ### Backend
 
 - **Django 6.0.1** - Web framework
-- **Django REST Framework** - API development
+- **Django REST Framework 3.16.1** - API development
+- **Pillow 12.1.0** - Image handling
 - **SQLite** - Database (development)
 - **Python 3.x** - Programming language
 
 ### Frontend
 
-- **Next.js 16** - React framework
-- **React 19** - UI library
+- **Next.js 16.1.6** - React framework
+- **React 19.2.4** - UI library
 - **Tailwind CSS 4** - Styling
 - **JavaScript** - Programming language
 
@@ -232,16 +235,21 @@ basic-blog-app/
 
 ## Future Enhancements
 
-- [✔] Image upload for posts (featured images)
-- [✔] Rich text editor with inline image uploads
-- [✔] User profiles
-- [ ] Post search functionality
-- [ ] Post likes/reactions
-- [ ] Email notifications
-- [ ] Social media sharing
-- [ ] Draft posts functionality
-- [ ] Code syntax highlighting
-- [ ] Table of contents for long posts
+**Completed**
+
+- Image upload for posts (featured images)
+- Rich text editor with inline image uploads
+- User profiles (profile editing, avatar upload)
+
+**Planned / Nice-to-have**
+
+- Post search functionality
+- Post likes / reactions
+- Draft posts workflow
+- Email notifications
+- Social media sharing
+- Code syntax highlighting in posts
+- Table of contents for long posts
 
 ## License
 
