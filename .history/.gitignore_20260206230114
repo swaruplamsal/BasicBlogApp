@@ -33,7 +33,6 @@ Thumbs.db
 # Project specific
 media/
 
-# Feedback file
 feedback.txt
 
 .history/agents
