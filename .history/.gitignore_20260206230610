@@ -1,0 +1,37 @@
+# Python virtual environment
+venv
+
+# GitHub Copilot agent configurations (personal workspace settings)
+.github/agents/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.db
+*.sqlite3
+
+# Node
+node_modules/
+.next/
+.env.local
+npm-debug.log*
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+media/
+
+# Feedback file
+feedback.txt
