@@ -26,9 +26,22 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all().select_related('author', 'category').prefetch_related('tags')
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    
+    def get_queryset(self):
+        """Optimized queryset with proper select_related and prefetch_related"""
+        return Post.objects.select_related(
+            'author', 
+            'author__profile',  # Include profile for avatar
+            'category'
+        ).prefetch_related(
+            'tags'
+        ).only(
+            'id', 'title', 'content', 'created_at', 'updated_at', 'comment_count', 'featured_image',
+            'author__id', 'author__username', 'author__profile__avatar',
+            'category__id', 'category__name'
+        )
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

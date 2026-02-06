@@ -1,6 +1,10 @@
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
+// Request cache for deduplication
+const requestCache = new Map();
+const CACHE_DURATION = 60 * 1000; // 1 minute
+
 // Helper function to get auth headers
 const getAuthHeaders = () => {
   // Check if we're running on the server or in the browser
@@ -19,7 +23,7 @@ const getAuthHeaders = () => {
   };
 };
 
-// Generic API call function
+// Generic API call function with caching
 const apiCall = async (endpoint, options = {}) => {
   const url = `${API_URL}${endpoint}`;
   const config = {
@@ -30,6 +34,42 @@ const apiCall = async (endpoint, options = {}) => {
     },
   };
 
+  // Add caching for GET requests
+  if (!options.method || options.method === "GET") {
+    const cacheKey = `${url}-${JSON.stringify(config)}`;
+    const cached = requestCache.get(cacheKey);
+
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return cached.data;
+    }
+
+    try {
+      const response = await fetch(url, config);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.detail ||
+            errorData.error ||
+            `API Error: ${response.status}`,
+        );
+      }
+
+      const data = await response.json();
+
+      // Cache successful responses
+      requestCache.set(cacheKey, {
+        data,
+        timestamp: Date.now(),
+      });
+
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Non-GET requests (POST, PUT, DELETE) - no caching
   const response = await fetch(url, config);
 
   if (!response.ok) {
@@ -49,7 +89,7 @@ const apiCall = async (endpoint, options = {}) => {
 
 // Posts API
 export const postsApi = {
-  getAll: () => apiCall("/posts/"),
+  getAll: (page = 1) => apiCall(`/posts/?page=${page}`),
 
   getById: (id) => apiCall(`/posts/${id}/`),
 

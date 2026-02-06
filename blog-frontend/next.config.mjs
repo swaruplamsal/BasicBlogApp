@@ -16,6 +16,15 @@ const nextConfig = {
         pathname: "/media/**",
       },
     ],
+    formats: ["image/webp", "image/avif"],
+  },
+  // Performance optimizations
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: true,
+  experimental: {
+    optimizeCss: true,
+    legacyBrowsers: false,
   },
 };
 

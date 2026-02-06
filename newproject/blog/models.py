@@ -55,15 +55,27 @@ class Category(models.Model):
         return self.name
 
 class Post(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, db_index=True)
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
-    published = models.BooleanField(default=False)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    published = models.BooleanField(default=False, db_index=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
     category= models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
     tags=models.ManyToManyField(Tag, blank=True, related_name="posts")
     featured_image=models.ImageField(upload_to='posts_images',null=True,blank=True)
+    
+    # Cached fields to avoid N+1 queries
+    comment_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['-created_at']),
+            models.Index(fields=['author', '-created_at']),
+            models.Index(fields=['category', '-created_at']),
+            models.Index(fields=['published', '-created_at']),
+        ]
 
     def __str__(self):
         return self.title
@@ -72,13 +84,34 @@ class Comment(models.Model):
     post= models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     author=models.ForeignKey(User, on_delete=models.CASCADE)
     content=models.TextField()
-    created_at=models.DateTimeField(auto_now_add=True)
+    created_at=models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
         ordering = ['-created_at'] # Newest comments first
+        indexes = [
+            models.Index(fields=['post', '-created_at']),
+            models.Index(fields=['author', '-created_at']),
+        ]
     
     def __str__(self):
         return f'Comment by {self.author.username} on {self.post.title}'
+    
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new:
+            # Update post comment count
+            Post.objects.filter(pk=self.post_id).update(
+                comment_count=models.F('comment_count') + 1
+            )
+    
+    def delete(self, *args, **kwargs):
+        post_id = self.post_id
+        super().delete(*args, **kwargs)
+        # Update post comment count
+        Post.objects.filter(pk=post_id).update(
+            comment_count=models.F('comment_count') - 1
+        )
     
 class PostImage(models.Model):
     post=models.ForeignKey(Post, on_delete=models.CASCADE,related_name='images', null=True, blank=True)

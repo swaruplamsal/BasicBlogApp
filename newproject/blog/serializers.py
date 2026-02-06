@@ -86,7 +86,7 @@ class PostSerializer(serializers.ModelSerializer):
     author_avatar = serializers.SerializerMethodField()
     category_name = serializers.CharField(source='category.name', read_only=True)
     tags = TagSerializer(many=True, read_only=True)
-    comment_count = serializers.SerializerMethodField()
+    # Use cached field instead of method
     featured_image=serializers.ImageField(required=False)
 
     class Meta:
@@ -96,7 +96,7 @@ class PostSerializer(serializers.ModelSerializer):
             'category', 'category_name', 'tags', 'created_at', 
             'updated_at', 'comment_count', 'featured_image'
         ]
-        read_only_fields = ['author', 'created_at', 'updated_at']
+        read_only_fields = ['author', 'created_at', 'updated_at', 'comment_count']
 
     def get_comment_count(self, obj):
         return obj.comments.count()

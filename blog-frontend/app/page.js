@@ -11,6 +11,9 @@ function stripHtml(html) {
     .trim();
 }
 
+// Enable static site generation with revalidation
+export const revalidate = 300; // 5 minutes
+
 export default async function HomePage() {
   let posts = [];
   let error = null;

@@ -8,9 +8,9 @@ import ReadingProgress from "../../components/ReadingProgress";
 import Avatar from "../../components/Avatar";
 import { postsApi, commentsApi } from "../../../lib/api";
 
-// Disable caching
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Enable static generation and ISR
+export const dynamic = "force-static";
+export const revalidate = 300; // 5 minutes
 
 export default async function PostDetailPage({ params }) {
   const resolvedParams = await params;
@@ -64,7 +64,8 @@ export default async function PostDetailPage({ params }) {
                 alt={post.title}
                 fill
                 className="object-cover"
-                unoptimized
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
           )}
