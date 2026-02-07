@@ -2,59 +2,178 @@
 
 @layer base {
   :root {
-    /* Bold Editorial Theme - Color Hunt Palette */
-    --background: #3a2525;
-    --background-elevated: #4a3535;
-    --background-hover: #5a4545;
-    --foreground: #f1f5f9;
-    --foreground-muted: #cbd5e1;
-    --foreground-subtle: #94a3b8;
-
-    /* Accent Colors */
-    --accent: #ff0000;
-    --accent-hover: #cc0000;
-    --accent-light: #ff3333;
-    --accent-secondary: #9e2a2a;
-    --navy: #000080;
-    --navy-hover: #0000a0;
-
-    /* Borders & Dividers */
-    --border: #5a4545;
-    --border-light: #6a5555;
-
+    /* Modern Dark Theme - Digital Editorial */
+    --background: #0a0a0a;
+    --background-elevated: #171717;
+    --background-subtle: #262626;
+    --background-overlay: #404040;
+    --background-glass: rgba(23, 23, 23, 0.8);
+    
+    /* Text Colors */
+    --foreground: #fafafa;
+    --foreground-secondary: #d4d4d4;
+    --foreground-muted: #a3a3a3;
+    --foreground-subtle: #737373;
+    
+    /* Brand Colors - Emerald + Mint */
+    --brand-primary: #10b981;
+    --brand-primary-hover: #059669;
+    --brand-primary-light: #34d399;
+    --brand-secondary: #14b8a6;
+    --brand-secondary-hover: #0d9488;
+    --brand-secondary-light: #2dd4bf;
+    
+    /* Borders & Highlights */
+    --border: #262626;
+    --border-light: #404040;
+    --border-emphasis: #525252;
+    --border-brand: var(--brand-primary);
+    
     /* Semantic Colors */
     --success: #10b981;
-    --error: #ff0000;
-    --warning: #ff0000;
+    --success-light: #d1fae5;
+    --warning: #f59e0b;
+    --warning-light: #fef3c7;
+    --error: #ef4444;
+    --error-light: #fee2e2;
+    
+    /* Glass Effect */
+    --glass-bg: rgba(23, 23, 23, 0.7);
+    --glass-border: rgba(64, 64, 64, 0.3);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    
+    /* Typography Scale */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+    --font-size-5xl: 3rem;
+    
+    /* Spacing System */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+  }
+
+  /* Base Styles */
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     background: var(--background);
     color: var(--foreground);
-    font-family:
-      var(--font-lora),
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      Roboto,
-      sans-serif;
-    line-height: 1.7;
+    font-family: var(--font-geist), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.65;
+    letter-spacing: -0.01em;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.011em;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-playfair), Georgia, serif;
-    font-weight: 700;
-    line-height: 1.25;
+  /* Typography Hierarchy */
+  h1, h2, h3, h4, h5, h6 {
     color: var(--foreground);
-    letter-spacing: -0.025em;
+    font-family: var(--font-source-serif), Georgia, serif;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  
+  h1 { 
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+  
+  h2 { 
+    font-size: clamp(1.875rem, 4vw, 3rem);
+    font-weight: 600;
+  }
+  
+  h3 { 
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 600;
+  }
+  
+  h4 { 
+    font-size: clamp(1.25rem, 2.5vw, 1.875rem);
+    font-weight: 500;
+  }
+  
+  h5 { 
+    font-size: 1.125rem;
+    font-weight: 500;
+  }
+  
+  h6 { 
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  p {
+    color: var(--foreground-secondary);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  a {
+    color: var(--brand-primary);
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  a:hover {
+    color: var(--brand-primary-light);
+  }
+
+  /* Selection Styles */
+  ::selection {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--foreground);
+  }
+
+  /* Focus Styles */
+  :focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--brand-primary);
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-light);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--brand-primary);
   }
 }
 

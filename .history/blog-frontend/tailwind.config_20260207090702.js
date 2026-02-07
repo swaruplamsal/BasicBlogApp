@@ -8,10 +8,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        lora: ["var(--font-lora)", "Lora", "serif"],
+        inter: ["var(--font-inter)", "Inter", "sans-serif"],
         playfair: ["var(--font-playfair)", "Playfair Display", "serif"],
       },
     },
   },
   plugins: [],
-};
+};l

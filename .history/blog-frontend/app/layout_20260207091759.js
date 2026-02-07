@@ -8,7 +8,7 @@ export const metadata = generateSiteMetadata();
 
 const lora = Lora({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-lora",
 });
 

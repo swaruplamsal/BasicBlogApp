@@ -8,8 +8,8 @@ export const metadata = generateSiteMetadata();
 
 const lora = Lora({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-lora",
+  weight: ["300", "400", "500", "600", "700", "800"],
+  variable: "--font-inter",
 });
 
 const playfair = Playfair_Display({
@@ -21,7 +21,7 @@ const playfair = Playfair_Display({
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${lora.variable} ${playfair.variable}`}>
+      <body className={`${inter.variable} ${playfair.variable}`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

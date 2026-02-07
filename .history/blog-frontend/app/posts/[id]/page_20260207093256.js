@@ -45,8 +45,7 @@ export default async function PostDetailPage({ params }) {
     if (!image) return null;
     try {
       const url = new URL(image);
-      const apiBase =
-        process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
       const apiOrigin = new URL(apiBase).origin;
       // If the upstream origin matches the API base, proxy it through our API
       if (url.origin === apiOrigin) {
@@ -81,21 +80,15 @@ export default async function PostDetailPage({ params }) {
           )}
 
           {/* Featured Image */}
-          {featuredImageSrc && (
+          {post.featured_image && (
             <div className="relative w-full h-96 rounded-xl overflow-hidden border border-slate-800">
               <Image
-                src={featuredImageSrc}
+                src={post.featured_image}
                 alt={post.title}
                 fill
                 className="object-cover"
                 priority
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                // If we proxy the image via our API the URL is same-origin and
-                // the image can be returned as-is; unoptimized avoids extra
-                // SSR-time fetch checks for proxied images.
-                unoptimized={
-                  featuredImageSrc?.startsWith("/api/image-proxy") || false
-                }
               />
             </div>
           )}

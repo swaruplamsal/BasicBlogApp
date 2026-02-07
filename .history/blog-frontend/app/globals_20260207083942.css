@@ -1,0 +1,324 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Modern Dark Editorial Theme - Emerald & Mint */
+    --background: #0a0a0a;
+    --background-elevated: #171717;
+    --background-hover: #262626;
+    --foreground: #fafafa;
+    --foreground-muted: #d4d4d4;
+    --foreground-subtle: #a3a3a3;
+
+    /* Sophisticated Emerald + Mint Accents (replacing harsh red) */
+    --accent: #10b981;
+    --accent-hover: #059669;
+    --accent-light: #34d399;
+    --accent-secondary: #14b8a6;
+    --mint: #2dd4bf;
+    --mint-hover: #0d9488;
+
+    /* Modern Borders */
+    --border: #262626;
+    --border-light: #404040;
+
+    /* Semantic Colors */
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family:
+      var(--font-inter),
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
+  }
+
+  /* Enhanced Typography Hierarchy - Strong Visual Distinction */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-source-serif), Georgia, serif;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--foreground);
+    letter-spacing: -0.025em;
+  }
+
+  /* Responsive, Distinctive Font Sizes */
+  h1 { 
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+  
+  h2 { 
+    font-size: clamp(1.875rem, 4vw, 2.5rem);
+    font-weight: 600;
+  }
+  
+  h3 { 
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+  }
+
+  h4 { 
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+
+  p {
+    color: var(--foreground-muted);
+    line-height: 1.7;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: var(--accent-light);
+  }
+
+  /* Custom Scrollbar with Brand Colors */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover);
+  }
+}
+
+@layer components {
+  /* Smooth Transitions */
+  * {
+    transition-property: background-color, border-color, color, transform, opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+
+  /* Modern Glass Effect */
+  .glass-effect {
+    background: rgba(23, 23, 23, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(64, 64, 64, 0.3);
+  }
+
+  /* Enhanced Reading Progress */
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+    z-index: 9999;
+    transition: width 0.1s ease-out;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  }
+
+  /* Sophisticated Card Hover Effects */
+  .card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -12px rgba(16, 185, 129, 0.2);
+    border-color: var(--border-light) !important;
+  }
+
+  /* Premium Button System */
+  .btn-primary {
+    background-color: var(--accent);
+    color: #ffffff;
+    box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--accent-hover);
+    box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
+  }
+
+  .btn-secondary {
+    background-color: var(--background-hover);
+    color: var(--foreground-muted);
+    border: 1px solid var(--border-light);
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--border);
+    border-color: var(--border-light);
+  }
+
+  .btn-danger {
+    background-color: var(--error);
+    color: #fff;
+    transition: all 0.2s ease;
+  }
+
+  .btn-danger:hover {
+    background-color: #dc2626;
+  }
+
+  .btn-success {
+    background-color: var(--success);
+    color: #fff;
+    transition: all 0.2s ease;
+  }
+
+  .btn-success:hover {
+    background-color: #059669;
+  }
+
+  /* Sophisticated Link Styles */
+  .link-emerald {
+    color: var(--accent);
+    transition: color 0.2s ease;
+  }
+
+  .link-emerald:hover {
+    color: var(--accent-light);
+  }
+
+  .link-nav {
+    color: var(--foreground-muted);
+    transition: color 0.2s ease;
+  }
+
+  .link-nav:hover {
+    color: var(--accent);
+  }
+
+  /* Article Elements */
+  .article-title {
+    color: var(--foreground);
+    transition: color 0.3s ease;
+  }
+
+  .article-title:hover {
+    color: var(--accent);
+  }
+
+  /* Enhanced Tag System */
+  .tag {
+    color: var(--foreground-subtle);
+    background-color: rgba(38, 38, 38, 0.5);
+    border: 1px solid rgba(64, 64, 64, 0.5);
+    transition: all 0.2s ease;
+  }
+
+  .tag:hover {
+    border-color: var(--accent-secondary);
+    color: var(--foreground-muted);
+  }
+
+  /* Modern Form Elements */
+  .form-input {
+    background-color: rgba(38, 38, 38, 0.5);
+    border: 1px solid var(--border-light);
+    color: var(--foreground);
+    transition: all 0.2s ease;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background-color: rgba(38, 38, 38, 0.7);
+  }
+
+  .form-label {
+    color: var(--foreground-muted);
+  }
+
+  .form-container {
+    background-color: rgba(23, 23, 23, 0.5);
+    border: 1px solid var(--border);
+  }
+
+  /* Brand Text Gradient */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Enhanced Animations */
+  @keyframes fadeIn {
+    from { 
+      opacity: 0; 
+      transform: translateY(10px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  @keyframes fadeInUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(30px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  @keyframes scaleIn {
+    from { 
+      opacity: 0; 
+      transform: scale(0.95); 
+    }
+    to { 
+      opacity: 1; 
+      transform: scale(1); 
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out;
+  }
+
+  /* Smooth Interaction */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
