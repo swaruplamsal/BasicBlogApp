@@ -1,0 +1,11 @@
+import Image from "next/image";
+import Link from "next/link";
+import SocialLinks from "./SocialLinks";
+
+export default function Footer() {
+  return (
+    <footer className="border-t mt-12 py-8 bg-white dark:bg-gray-900">
+        div
+    </footer>
+  );
+}

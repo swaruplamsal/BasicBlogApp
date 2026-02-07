@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Navbar from "./components/Navbar";
 import Avatar from "./components/Avatar";
-import Footer from "./components/Footer";
+u
 import { postsApi } from "../lib/api";
 
 // Helper function to strip HTML tags for preview
@@ -61,7 +61,7 @@ export default async function HomePage() {
               The Chronicle
             </h1>
             <p className="text-2xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-              Where personal stories, essays, and ideas flourish
+              Where stories breathe and ideas flourish
             </p>
             <div className="flex gap-4 justify-center pt-4">
               <Link
@@ -181,7 +181,6 @@ export default async function HomePage() {
           </div>
         )}
       </div>
-      <Footer />
     </div>
   );
 }
