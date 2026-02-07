@@ -34,6 +34,15 @@ export default function Navbar() {
                 priority
               />
             </div>
+            <span
+              className="text-2xl font-bold"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                color: "#f1f5f9",
+              }}
+            >
+              Editorial
+            </span>
           </Link>
 
           {/* Nav Links */}

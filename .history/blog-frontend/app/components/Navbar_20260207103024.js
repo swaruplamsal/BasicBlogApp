@@ -28,12 +28,21 @@ export default function Navbar() {
               <Image
                 src="/images/logo.png"
                 alt="Editorial logo"
-                width={150}
-                height={150}
+                width={100}
+                width={100}
                 className="object-cover"
                 priority
               />
             </div>
+            <span
+              className="text-2xl font-bold"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                color: "#f1f5f9",
+              }}
+            >
+              Editorial
+            </span>
           </Link>
 
           {/* Nav Links */}

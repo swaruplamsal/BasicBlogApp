@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function SignupPage() {
   const [username, setUsername] = useState("");
@@ -45,15 +44,15 @@ export default function SignupPage() {
             className="inline-flex items-center gap-2 mb-6 cursor-pointer"
           >
             <div>
-              <Image
-                src="/images/logo.png"
-                alt="Editorial logo"
-                width={200}
-                height={200}
-                className="object-cover"
-                priority
-              />
-            </div>
+                          <Image
+                            src="/images/logo.png"
+                            alt="Editorial logo"
+                            width={200}
+                            height={200}
+                            className="object-cover"
+                            priority
+                          />
+                        </div>
           </Link>
           <h1
             className="text-4xl font-bold mb-2"

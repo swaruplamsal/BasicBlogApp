@@ -1,20 +1,18 @@
-// app/signup/page.js
+// app/login/page.js
 "use client";
 
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 
-export default function SignupPage() {
+export default function LoginPage() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { signup } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -22,7 +20,7 @@ export default function SignupPage() {
     setError("");
     setLoading(true);
 
-    const result = await signup(username, email, password);
+    const result = await login(username, password);
 
     if (result.success) {
       router.push("/");
@@ -45,15 +43,24 @@ export default function SignupPage() {
             className="inline-flex items-center gap-2 mb-6 cursor-pointer"
           >
             <div>
-              <Image
-                src="/images/logo.png"
-                alt="Editorial logo"
-                width={200}
-                height={200}
-                className="object-cover"
-                priority
-              />
-            </div>
+                          <Image
+                            src="/images/logo.png"
+                            alt="Editorial logo"
+                            width={150}
+                            height={150}
+                            className="object-cover"
+                            priority
+                          />
+                        </div>
+            <span
+              className="text-2xl font-bold"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                color: "#f1f5f9",
+              }}
+            >
+              Editorial
+            </span>
           </Link>
           <h1
             className="text-4xl font-bold mb-2"
@@ -62,9 +69,11 @@ export default function SignupPage() {
               color: "#f1f5f9",
             }}
           >
-            Join Editorial
+            Welcome Back
           </h1>
-          <p style={{ color: "#cbd5e1" }}>Create an account to start writing</p>
+          <p style={{ color: "#cbd5e1" }}>
+            Sign in to your account to continue
+          </p>
         </div>
 
         <div
@@ -114,27 +123,6 @@ export default function SignupPage() {
                 className="block text-sm font-medium mb-2"
                 style={{ color: "#cbd5e1" }}
               >
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg transition-all"
-                style={{
-                  backgroundColor: "rgba(90, 69, 69, 0.5)",
-                  border: "1px solid #6a5555",
-                  color: "#f1f5f9",
-                }}
-                required
-              />
-            </div>
-
-            <div>
-              <label
-                className="block text-sm font-medium mb-2"
-                style={{ color: "#cbd5e1" }}
-              >
                 Password
               </label>
               <input
@@ -156,17 +144,17 @@ export default function SignupPage() {
               disabled={loading}
               className="btn-primary w-full text-white font-semibold py-3 px-4 rounded-lg transition-all shadow-lg cursor-pointer disabled:cursor-not-allowed"
             >
-              {loading ? "Creating account..." : "Sign Up"}
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 
           <p className="text-center mt-6" style={{ color: "#94a3b8" }}>
-            Already have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
-              href="/login"
+              href="/signup"
               className="link-red font-semibold cursor-pointer"
             >
-              Login
+              Sign up
             </Link>
           </p>
         </div>

@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function SignupPage() {
   const [username, setUsername] = useState("");
@@ -44,16 +43,24 @@ export default function SignupPage() {
             href="/"
             className="inline-flex items-center gap-2 mb-6 cursor-pointer"
           >
-            <div>
-              <Image
+            <div className="w-10 h-10 rounded-lg overflow-hidden shadow-lg">
+              <img
                 src="/images/logo.png"
                 alt="Editorial logo"
-                width={200}
-                height={200}
+                width={40}
+                height={40}
                 className="object-cover"
-                priority
               />
             </div>
+            <span
+              className="text-2xl font-bold"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                color: "#f1f5f9",
+              }}
+            >
+              Editorial
+            </span>
           </Link>
           <h1
             className="text-4xl font-bold mb-2"

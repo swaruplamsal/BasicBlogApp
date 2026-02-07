@@ -24,16 +24,25 @@ export default function Navbar() {
             className="group flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
             {/* Replace the inline svg with a logo image from public/images/logo.png */}
-            <div>
+            <div className="w-10 h-10 rounded-lg overflow-hidden shadow-lg">
               <Image
                 src="/images/logo.png"
                 alt="Editorial logo"
-                width={150}
-                height={150}
+                width={40}
+                height={40}
                 className="object-cover"
                 priority
               />
             </div>
+            <span
+              className="text-2xl font-bold"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                color: "#f1f5f9",
+              }}
+            >
+              Editorial
+            </span>
           </Link>
 
           {/* Nav Links */}
