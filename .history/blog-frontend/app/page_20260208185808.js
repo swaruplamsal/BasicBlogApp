@@ -51,6 +51,7 @@ export default async function HomePage() {
   return (
     <div className="min-h-screen bg-slate-950">
       <Navbar />
+
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-br from-red-950/20 via-slate-950 to-blue-950/20"></div>
@@ -79,6 +80,7 @@ export default async function HomePage() {
           </div>
         </div>
       </div>
+
       {/* Posts Grid */}
       <div id="posts" className="max-w-7xl mx-auto px-6 py-20">
         <div className="flex items-center justify-between mb-12">
@@ -183,3 +185,5 @@ export default async function HomePage() {
     </div>
   );
 }
+
+

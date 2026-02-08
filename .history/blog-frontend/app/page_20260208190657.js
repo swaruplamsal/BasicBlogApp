@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Avatar from "./components/Avatar";
 import Footer from "./components/Footer";
 import { postsApi } from "../lib/api";
+import SocialLinks from "./components/SocialLinks";
 
 // Helper function to strip HTML tags for preview
 function stripHtml(html) {
@@ -179,7 +180,11 @@ export default async function HomePage() {
           </div>
         )}
       </div>
-      <Footer />
+      <Footer <SocialLinks
+        github="https://github.com/swaruplamsal"
+        twitter="https://x.com/I_am_swarup99"
+        linkedin="https://www.linkedin.com/in/swarup-lamsal-688338326/"
+      />/>
     </div>
   );
 }

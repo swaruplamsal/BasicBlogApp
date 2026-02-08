@@ -11,8 +11,8 @@ export default function Footer() {
             <Image
               src="/images/logo.png"
               alt="Logo"
-              width={200}
-              height={200}
+              width={150}
+              height={150}
               className="rounded-sm"
             />
           </Link>

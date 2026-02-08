@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Avatar from "./components/Avatar";
 import Footer from "./components/Footer";
 import { postsApi } from "../lib/api";
+import SocialLinks from "./components/SocialLinks";
 
 // Helper function to strip HTML tags for preview
 function stripHtml(html) {

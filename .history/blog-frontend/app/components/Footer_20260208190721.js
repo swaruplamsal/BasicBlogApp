@@ -11,8 +11,8 @@ export default function Footer() {
             <Image
               src="/images/logo.png"
               alt="Logo"
-              width={200}
-              height={200}
+              width={150}
+              height={150}
               className="rounded-sm"
             />
           </Link>
@@ -42,7 +42,7 @@ export default function Footer() {
           </Link>
         </nav>
 
-        <div className="flex-shrink-0 md:ml-auto">
+        <div>
           <SocialLinks
             github="https://github.com/swaruplamsal"
             twitter="https://x.com/I_am_swarup99"

@@ -12,7 +12,7 @@ export default function Footer() {
               src="/images/logo.png"
               alt="Logo"
               width={200}
-              height={200}
+              height={150}
               className="rounded-sm"
             />
           </Link>
