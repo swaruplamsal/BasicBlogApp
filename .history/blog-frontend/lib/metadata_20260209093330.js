@@ -20,7 +20,7 @@ export const generateSiteMetadata = () => ({
   // Fallback favicon / site icon. Place a file at public/favicon.png (or /favicon.ico)
   icons: {
     icon: "/logo.ico",
-    apple: "/logo.ico",
+    apple: "/icon.ico",
   },
 });
 
