@@ -45,8 +45,8 @@ export default function Footer() {
         <div className="flex-shrink-0 md:ml-auto">
           <SocialLinks
             github="swaruplamsal"
-            twitter="I_am_swarup99"
-            linkedin="swarup-lamsal-688338326/"
+            twitter="https://x.com/I_am_swarup99"
+            linkedin="https://www.linkedin.com/in/swarup-lamsal-688338326/"
           />
         </div>
       </div>

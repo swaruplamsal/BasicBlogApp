@@ -46,7 +46,7 @@ export default function Footer() {
           <SocialLinks
             github="swaruplamsal"
             twitter="I_am_swarup99"
-            linkedin="swarup-lamsal-688338326/"
+            linkedin="https://www.linkedin.com/in/swarup-lamsal-688338326/"
           />
         </div>
       </div>
