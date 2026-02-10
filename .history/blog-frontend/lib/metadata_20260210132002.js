@@ -4,7 +4,7 @@ export function generatePostMetadata(post, request) {
     process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
   const postUrl = `${baseUrl}/posts/${post.slug || post.id}`;
   const imageUrl =
-    post.featured_image_url || `${baseUrl}/images/default-og.jpg`;
+    post.featured_image_url || `${baseUrl}/images/logo.png`;
 
   // Strip HTML for description fallback
   const stripHtml = (html) =>
@@ -82,7 +82,7 @@ export function generateStructuredData(post) {
     "@type": "Article",
     headline: post.title,
     description,
-    image: post.featured_image_url || `${baseUrl}/images/default-og.jpg`,
+    image: post.featured_image_url || `${baseUrl}/images/logo.png`,
     datePublished: post.published_at || post.created_at,
     dateModified: post.updated_at,
     author: {
@@ -126,9 +126,10 @@ export function generateHomeMetadata() {
       description: "Discover insightful articles, tutorials, and stories.",
       images: [
         {
-          url: `${baseUrl}/images/og-home.jpg`,
+          url: `${baseUrl}/images/logo.png`,
           width: 1200,
           height: 630,
+          alt: "Blog Logo",
         },
       ],
     },

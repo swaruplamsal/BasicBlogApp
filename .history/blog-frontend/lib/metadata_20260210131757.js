@@ -95,7 +95,7 @@ export function generateStructuredData(post) {
       name: "Your Blog Name",
       logo: {
         "@type": "ImageObject",
-        url: `${baseUrl}/images/logo.png`,
+        url: `${baseUrl}/logo.ico`,
       },
     },
     mainEntityOfPage: {

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import Script from "next/script";
 import Navbar from "../../components/Navbar";
 import CommentList from "../../components/CommentList";
 import CommentForm from "../../components/CommentForm";
@@ -60,9 +59,6 @@ export default async function PostDetailPage({ params }) {
     throw error;
   }
 
-  // Generate structured data for SEO
-  const structuredData = generateStructuredData(post);
-
   // Security: if the backend returns an absolute URL that points to the API host
   // (localhost / 127.0.0.1) we proxy it through our own API route so Next.js
   // doesn't block it for resolving to a private IP during SSR.
@@ -89,15 +85,6 @@ export default async function PostDetailPage({ params }) {
 
   return (
     <div className="min-h-screen bg-slate-950">
-      {/* Add structured data for SEO */}
-      <Script
-        id="structured-data"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
-        }}
-      />
-
       <ReadingProgress />
       <Navbar />
 

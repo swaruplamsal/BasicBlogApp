@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import Script from "next/script";
 import Navbar from "../../components/Navbar";
 import CommentList from "../../components/CommentList";
 import CommentForm from "../../components/CommentForm";
@@ -9,30 +8,11 @@ import ReadingProgress from "../../components/ReadingProgress";
 import Avatar from "../../components/Avatar";
 import ReactionBar from "../../components/ReactionBar";
 import { postsApi, commentsApi } from "../../../lib/api";
-import {
-  generatePostMetadata,
-  generateStructuredData,
-} from "../../../lib/metadata";
+
 
 // Enable static generation and ISR
 export const dynamic = "force-static";
 export const revalidate = 300; // 5 minutes
-
-// Generate metadata for SEO
-export async function generateMetadata({ params }) {
-  const resolvedParams = await params;
-  const { id } = resolvedParams;
-
-  try {
-    const post = await postsApi.getById(id);
-    return generatePostMetadata(post);
-  } catch (error) {
-    return {
-      title: "Post Not Found",
-      description: "The requested post could not be found.",
-    };
-  }
-}
 
 export default async function PostDetailPage({ params }) {
   const resolvedParams = await params;
@@ -60,9 +40,6 @@ export default async function PostDetailPage({ params }) {
     throw error;
   }
 
-  // Generate structured data for SEO
-  const structuredData = generateStructuredData(post);
-
   // Security: if the backend returns an absolute URL that points to the API host
   // (localhost / 127.0.0.1) we proxy it through our own API route so Next.js
   // doesn't block it for resolving to a private IP during SSR.
@@ -89,15 +66,6 @@ export default async function PostDetailPage({ params }) {
 
   return (
     <div className="min-h-screen bg-slate-950">
-      {/* Add structured data for SEO */}
-      <Script
-        id="structured-data"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(structuredData),
-        }}
-      />
-
       <ReadingProgress />
       <Navbar />
 

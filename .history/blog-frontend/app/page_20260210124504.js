@@ -5,7 +5,7 @@ import Footer from "./components/Footer";
 import { postsApi } from "../lib/api";
 import { generateHomeMetadata } from "../lib/metadata";
 
-export const metadata = generateHomeMetadata();
+
 // Helper function to strip HTML tags for preview
 function stripHtml(html) {
   return html

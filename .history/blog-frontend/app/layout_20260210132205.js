@@ -5,9 +5,9 @@ import "./globals.css";
 
 export const metadata = {
   icons: {
-    icon: "/logo.ico",
-    shortcut: "/logo.ico",
-    apple: "/logo.ico",
+    icon: '/logo.ico',
+    shortcut: '/logo.ico',
+    apple: '/logo.ico',
   },
 };
 

@@ -7,16 +7,8 @@ export function generatePostMetadata(post, request) {
     post.featured_image_url || `${baseUrl}/images/default-og.jpg`;
 
   // Strip HTML for description fallback
-  const stripHtml = (html) =>
-    html
-      ?.replace(/<[^>]*>/g, " ")
-      .replace(/\s+/g, " ")
-      .trim() || "";
-  const description =
-    post.meta_description ||
-    post.excerpt ||
-    stripHtml(post.content)?.substring(0, 160) ||
-    `Read more about ${post.title}`;
+  const stripHtml = (html) => html?.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() || "";
+  const description = post.meta_description || post.excerpt || stripHtml(post.content)?.substring(0, 160) || `Read more about ${post.title}`;
 
   return {
     title: post.title,
@@ -66,16 +58,8 @@ export function generateStructuredData(post) {
     process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
   const postUrl = `${baseUrl}/posts/${post.slug || post.id}`;
 
-  const stripHtml = (html) =>
-    html
-      ?.replace(/<[^>]*>/g, " ")
-      .replace(/\s+/g, " ")
-      .trim() || "";
-  const description =
-    post.meta_description ||
-    post.excerpt ||
-    stripHtml(post.content)?.substring(0, 160) ||
-    `Read more about ${post.title}`;
+  const stripHtml = (html) => html?.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() || "";
+  const description = post.meta_description || post.excerpt || stripHtml(post.content)?.substring(0, 160) || `Read more about ${post.title}`;
 
   return {
     "@context": "https://schema.org",
@@ -105,9 +89,7 @@ export function generateStructuredData(post) {
     url: postUrl,
     wordCount: post.content ? stripHtml(post.content).split(" ").length : 0,
     ...(post.category_name && { articleSection: post.category_name }),
-    ...(post.tags?.length && {
-      keywords: post.tags.map((tag) => tag.name).join(", "),
-    }),
+    ...(post.tags?.length && { keywords: post.tags.map((tag) => tag.name).join(", ") }),
   };
 }
 

@@ -6,27 +6,16 @@ export function generatePostMetadata(post, request) {
   const imageUrl =
     post.featured_image_url || `${baseUrl}/images/default-og.jpg`;
 
-  // Strip HTML for description fallback
-  const stripHtml = (html) =>
-    html
-      ?.replace(/<[^>]*>/g, " ")
-      .replace(/\s+/g, " ")
-      .trim() || "";
-  const description =
-    post.meta_description ||
-    post.excerpt ||
-    stripHtml(post.content)?.substring(0, 160) ||
-    `Read more about ${post.title}`;
-
   return {
     title: post.title,
-    description,
+    description:
+      post.meta_description || post.excerpt || post.content?.substring(0, 160),
     authors: [{ name: post.author_username }],
     openGraph: {
       type: "article",
       url: postUrl,
       title: post.title,
-      description,
+      description: post.meta_description || post.excerpt,
       images: [
         {
           url: imageUrl,
@@ -45,7 +34,7 @@ export function generatePostMetadata(post, request) {
     twitter: {
       card: "summary_large_image",
       title: post.title,
-      description,
+      description: post.meta_description || post.excerpt,
       images: [imageUrl],
     },
     alternates: {
@@ -66,23 +55,12 @@ export function generateStructuredData(post) {
     process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
   const postUrl = `${baseUrl}/posts/${post.slug || post.id}`;
 
-  const stripHtml = (html) =>
-    html
-      ?.replace(/<[^>]*>/g, " ")
-      .replace(/\s+/g, " ")
-      .trim() || "";
-  const description =
-    post.meta_description ||
-    post.excerpt ||
-    stripHtml(post.content)?.substring(0, 160) ||
-    `Read more about ${post.title}`;
-
   return {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
-    description,
-    image: post.featured_image_url || `${baseUrl}/images/default-og.jpg`,
+    description: post.meta_description || post.excerpt,
+    image: post.featured_image_url,
     datePublished: post.published_at || post.created_at,
     dateModified: post.updated_at,
     author: {
@@ -103,40 +81,57 @@ export function generateStructuredData(post) {
       "@id": postUrl,
     },
     url: postUrl,
-    wordCount: post.content ? stripHtml(post.content).split(" ").length : 0,
-    ...(post.category_name && { articleSection: post.category_name }),
-    ...(post.tags?.length && {
-      keywords: post.tags.map((tag) => tag.name).join(", "),
-    }),
+    wordCount: post.content ? post.content.split(" ").length : 0,
+    articleSection: post.category_name,
+    keywords: post.tags?.map((tag) => tag.name).join(", ") || "",
   };
 }
 
-export function generateHomeMetadata() {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
+export const generateSiteMetadata = () => ({
+  title: {
+    template: "%s | The Chronicle",
+    default: "The Chronicle - Where Stories Matter",
+  },
+  description:
+    "Discover thoughtful perspectives, compelling narratives, and insights that challenge the ordinary.",
+  keywords: ["blog", "stories", "articles", "writing", "chronicle"],
+  authors: [{ name: "The Chronicle Team" }],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "The Chronicle",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+  // Fallback favicon / site icon. Place a file at public/favicon.png (or /favicon.ico)
+  icons: {
+    icon: "/logo.ico",
+    apple: "/logo.ico",
+  },
+});
+
+export const generatePostMetadata = (post) => {
+  if (!post) return {};
 
   return {
-    title: "Home - Your Blog Name",
-    description:
-      "Discover insightful articles, tutorials, and stories on [your topics].",
+    title: post.title,
+    description: post.content.substring(0, 160) + "...",
+    keywords: post.tags?.map((tag) => tag.name) || [],
+    authors: [{ name: post.author?.username || "Anonymous" }],
     openGraph: {
-      type: "website",
-      url: baseUrl,
-      title: "Your Blog Name",
-      description: "Discover insightful articles, tutorials, and stories.",
-      images: [
-        {
-          url: `${baseUrl}/images/og-home.jpg`,
-          width: 1200,
-          height: 630,
-        },
-      ],
+      title: post.title,
+      description: post.content.substring(0, 160) + "...",
+      type: "article",
+      publishedTime: post.created_at,
+      modifiedTime: post.updated_at,
+      authors: [post.author?.username || "Anonymous"],
+      tags: post.tags?.map((tag) => tag.name) || [],
     },
     twitter: {
       card: "summary_large_image",
-    },
-    alternates: {
-      canonical: baseUrl,
+      title: post.title,
+      description: post.content.substring(0, 160) + "...",
     },
   };
-}
+};

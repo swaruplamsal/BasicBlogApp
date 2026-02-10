@@ -1,15 +1,10 @@
 // app/layout.js
 import { Lora, Playfair_Display } from "next/font/google";
 import { AuthProvider } from "./context/AuthContext";
+import { generateHomeMetadata } from "../lib/metadata";
 import "./globals.css";
 
-export const metadata = {
-  icons: {
-    icon: "/logo.ico",
-    shortcut: "/logo.ico",
-    apple: "/logo.ico",
-  },
-};
+export const metadata = generateHomeMetadata();
 
 const lora = Lora({
   subsets: ["latin"],

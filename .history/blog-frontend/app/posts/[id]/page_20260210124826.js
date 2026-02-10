@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import Script from "next/script";
 import Navbar from "../../components/Navbar";
 import CommentList from "../../components/CommentList";
 import CommentForm from "../../components/CommentForm";
@@ -89,9 +88,7 @@ export default async function PostDetailPage({ params }) {
 
   return (
     <div className="min-h-screen bg-slate-950">
-      {/* Add structured data for SEO */}
-      <Script
-        id="structured-data"
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(structuredData),

@@ -3,14 +3,6 @@ import { Lora, Playfair_Display } from "next/font/google";
 import { AuthProvider } from "./context/AuthContext";
 import "./globals.css";
 
-export const metadata = {
-  icons: {
-    icon: "/logo.ico",
-    shortcut: "/logo.ico",
-    apple: "/logo.ico",
-  },
-};
-
 const lora = Lora({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
