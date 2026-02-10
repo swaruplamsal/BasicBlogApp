@@ -80,28 +80,6 @@ class Post(models.Model):
             models.Index(fields=['published', '-created_at']),
         ]
 
-    def save(self, *args, **kwargs):
-        # Auto-generate slug from title if empty
-        if not self.slug:
-            from django.utils.text import slugify
-            base_slug = slugify(self.title)
-            slug = base_slug
-            counter = 1
-            while Post.objects.filter(slug=slug).exists():
-                slug = f"{base_slug}-{counter}"
-                counter += 1
-            self.slug = slug
-        
-        # Auto-generate excerpt from content if empty
-        if not self.excerpt and self.content:
-            from django.utils.html import strip_tags
-            self.excerpt = strip_tags(self.content)[:297] + "..."
-        
-        super().save(*args, **kwargs)
-    
-    def get_absolute_url(self):
-        return f"/posts/{self.slug}"
-
     def __str__(self):
         return self.title
     

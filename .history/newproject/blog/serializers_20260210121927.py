@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import Post, Comment, Category, Tag, UserProfile, Reaction
 from django.contrib.auth.models import User
 from django.db.models import Count
-from django.utils.html import strip_tags
 
 
 class ReactionSerializer(serializers.ModelSerializer):
@@ -136,36 +135,10 @@ class PostSerializer(serializers.ModelSerializer):
             'absolute_url',
             'reading_time',
         ]
-        read_only_fields = [
-            'author', 
-            'slug', 
-            'excerpt', 
-            'created_at', 
-            'updated_at', 
-            'comment_count'
-        ]
+        read_only_fields = ['author', 'slug', '' 'created_at', 'updated_at', 'comment_count']
 
     def get_comment_count(self, obj):
         return obj.comments.count()
-    
-    def get_featured_image_url(self, obj):
-        if obj.featured_image:
-            request = self.context.get('request')
-            if request:
-                return request.build_absolute_uri(obj.featured_image.url)
-            return obj.featured_image.url
-        return None
-    
-    def get_absolute_url(self, obj):
-        request = self.context.get('request')
-        if request:
-            return request.build_absolute_uri(obj.get_absolute_url())
-        return obj.get_absolute_url()
-    
-    def get_reading_time(self, obj):
-        word_count = len(strip_tags(obj.content).split())
-        return max(1, round(word_count / 200))
-    
     
     def get_author_avatar(self, obj):
         if hasattr(obj.author, 'profile') and obj.author.profile.avatar:

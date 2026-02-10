@@ -64,10 +64,7 @@ class Post(models.Model):
     category= models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
     tags=models.ManyToManyField(Tag, blank=True, related_name="posts")
     featured_image=models.ImageField(upload_to='posts_images',null=True,blank=True)
-    slug=models.SlugField(max_length=255,unique=True,db_index=True)
-    excerpt=models.TextField(max_length=300,blank=True,help_text="Short summary for previews")
-    meta_description=models.CharField(max_length=160,blank=True,help_text="SEO meta description")
-    canonical_url=models.URLField(blank=True,null=True,help_text="Canonical URL if content is republished")
+    slug=models.SlugField(max_length=255,unique=True,db)
     # Cached fields to avoid N+1 queries
     comment_count = models.PositiveIntegerField(default=0)
 
@@ -79,28 +76,6 @@ class Post(models.Model):
             models.Index(fields=['category', '-created_at']),
             models.Index(fields=['published', '-created_at']),
         ]
-
-    def save(self, *args, **kwargs):
-        # Auto-generate slug from title if empty
-        if not self.slug:
-            from django.utils.text import slugify
-            base_slug = slugify(self.title)
-            slug = base_slug
-            counter = 1
-            while Post.objects.filter(slug=slug).exists():
-                slug = f"{base_slug}-{counter}"
-                counter += 1
-            self.slug = slug
-        
-        # Auto-generate excerpt from content if empty
-        if not self.excerpt and self.content:
-            from django.utils.html import strip_tags
-            self.excerpt = strip_tags(self.content)[:297] + "..."
-        
-        super().save(*args, **kwargs)
-    
-    def get_absolute_url(self):
-        return f"/posts/{self.slug}"
 
     def __str__(self):
         return self.title

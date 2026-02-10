@@ -64,7 +64,7 @@ class Post(models.Model):
     category= models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
     tags=models.ManyToManyField(Tag, blank=True, related_name="posts")
     featured_image=models.ImageField(upload_to='posts_images',null=True,blank=True)
-    slug=models.SlugField(max_length=255,unique=True,db_index=True)
+    slug=models.SlugField(max_length=255,blank=True,,db_index=True)
     excerpt=models.TextField(max_length=300,blank=True,help_text="Short summary for previews")
     meta_description=models.CharField(max_length=160,blank=True,help_text="SEO meta description")
     canonical_url=models.URLField(blank=True,null=True,help_text="Canonical URL if content is republished")

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Post, Comment, Category, Tag, UserProfile, Reaction
 from django.contrib.auth.models import User
 from django.db.models import Count
-from django.utils.html import strip_tags
+from django.
 
 
 class ReactionSerializer(serializers.ModelSerializer):
@@ -155,17 +155,17 @@ class PostSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.featured_image.url)
             return obj.featured_image.url
         return None
-    
+
     def get_absolute_url(self, obj):
         request = self.context.get('request')
         if request:
             return request.build_absolute_uri(obj.get_absolute_url())
         return obj.get_absolute_url()
-    
+
     def get_reading_time(self, obj):
+        # Average reading speed: 200 words per minute
         word_count = len(strip_tags(obj.content).split())
         return max(1, round(word_count / 200))
-    
     
     def get_author_avatar(self, obj):
         if hasattr(obj.author, 'profile') and obj.author.profile.avatar:

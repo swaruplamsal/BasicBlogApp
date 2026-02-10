@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Post, Comment, Category, Tag, UserProfile, Reaction
 from django.contrib.auth.models import User
 from django.db.models import Count
-from django.utils.html import strip_tags
+from django.utils import strip_tags
 
 
 class ReactionSerializer(serializers.ModelSerializer):
@@ -163,6 +163,8 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.get_absolute_url()
     
     def get_reading_time(self, obj):
+        # Estimate reading time (avg 200 words/min)
+        from django.utils.html import strip_tags
         word_count = len(strip_tags(obj.content).split())
         return max(1, round(word_count / 200))
     
